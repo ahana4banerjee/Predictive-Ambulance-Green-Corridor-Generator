@@ -1,0 +1,54 @@
+{
+  "scenarios": [
+    {
+      "id": 1,
+      "name": "Scenario 1: Clear Grid",
+      "description": "All junctions have LOW traffic. The shortest route A -> B -> C -> F -> I should be chosen.",
+      "traffic_counts": {
+        "A": 3, "B": 4, "C": 2, "D": 5, "E": 3, "F": 4, "G": 2, "H": 3, "I": 0
+      },
+      "expected_route": ["A", "B", "C", "F", "I"],
+      "expected_cost": 4.0
+    },
+    {
+      "id": 2,
+      "name": "Scenario 2: Congested Shortest Path",
+      "description": "Junction B and C have HIGH traffic. The optimizer should bypass them and route through the lower part: A -> D -> G -> H -> I.",
+      "traffic_counts": {
+        "A": 5, "B": 32, "C": 28, "D": 4, "E": 15, "F": 5, "G": 3, "H": 4, "I": 0
+      },
+      "expected_route": ["A", "D", "G", "H", "I"],
+      "expected_cost": 4.0
+    },
+    {
+      "id": 3,
+      "name": "Scenario 3: Western Congestion",
+      "description": "Junction D and G have HIGH traffic. The optimizer should choose the upper route: A -> B -> C -> F -> I.",
+      "traffic_counts": {
+        "A": 4, "B": 5, "C": 3, "D": 30, "E": 6, "F": 4, "G": 27, "H": 5, "I": 0
+      },
+      "expected_route": ["A", "B", "C", "F", "I"],
+      "expected_cost": 4.0
+    },
+    {
+      "id": 4,
+      "name": "Scenario 4: Diagonal Blockage",
+      "description": "Junction B and E have HIGH traffic. The optimizer must choose A -> D -> G -> H -> I to reach the hospital.",
+      "traffic_counts": {
+        "A": 5, "B": 33, "C": 4, "D": 6, "E": 28, "F": 5, "G": 5, "H": 4, "I": 0
+      },
+      "expected_route": ["A", "D", "G", "H", "I"],
+      "expected_cost": 4.0
+    },
+    {
+      "id": 5,
+      "name": "Scenario 5: Mixed Traffic Gridlock",
+      "description": "Heavy traffic blocks both normal shortest routes (B is HIGH, D is MEDIUM, E is HIGH). The router should select A -> D -> G -> H -> I as the most optimal path.",
+      "traffic_counts": {
+        "A": 6, "B": 35, "C": 25, "D": 15, "E": 30, "F": 12, "G": 5, "H": 6, "I": 0
+      },
+      "expected_route": ["A", "D", "G", "H", "I"],
+      "expected_cost": 6.0
+    }
+  ]
+}
