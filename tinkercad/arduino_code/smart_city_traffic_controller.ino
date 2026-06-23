@@ -39,13 +39,15 @@ LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 // ENUMS & CONSTANTS
 // ============================================================================
 
+// ============================================================================
+// ENUMS & CONSTANTS
+// ============================================================================
+
 // System state machine modes
 enum SystemMode {
   NORMAL,
   EMERGENCY_ROUTE,
-  CORRIDOR_A,
-  CORRIDOR_B,
-  CORRIDOR_C,
+  EMERGENCY_CORRIDOR,
   ARRIVAL,
   RECOVERY
 };
@@ -96,8 +98,13 @@ unsigned long debounceTimerB = 0;
 unsigned long debounceTimerC = 0;
 unsigned long debounceTimerAmb = 0;
 
-// Ambulance ETA tracking
-int etaSeconds = 252; // 4 minutes 12 seconds base ETA (252 seconds)
+// Ambulance routing and ETA variables
+String activeRouteStr = "A>B>C>I";
+char activeRoutePath[6] = {'A', 'B', 'C', 'I', '\0', '\0'};
+int activeRouteLength = 4;
+int currentCorridorStep = 0;
+int etaSeconds = 252;
+int baseEtaSeconds = 252;
 
 // ============================================================================
 // SETUP & INITIALIZATION
@@ -158,7 +165,6 @@ void loop() {
     case EMERGENCY_ROUTE:
       // Show selected route for 2 seconds before ambulance starts moving
       setAllLEDsOff();
-      // Keep signals at A red, preparing
       digitalWrite(RED_A, HIGH);
       digitalWrite(RED_B, HIGH);
       digitalWrite(RED_C, HIGH);
@@ -166,76 +172,39 @@ void loop() {
       updateLCDEmergencyRoute(now);
       
       if (now - modeTimer >= 2000) {
-        currentMode = CORRIDOR_A;
-        modeTimer = now;
-        etaSeconds = 252;
-      }
-      break;
-      
-    case CORRIDOR_A:
-      // Override Junction A to GREEN, others normal/preparing
-      digitalWrite(RED_A, LOW);
-      digitalWrite(YEL_A, LOW);
-      digitalWrite(GRN_A, HIGH);
-      
-      // Junction B is RED, preparing
-      digitalWrite(RED_B, HIGH);
-      digitalWrite(YEL_B, LOW);
-      digitalWrite(GRN_B, LOW);
-      
-      // Junction C cycles normally
-      runNormalCyclingJunctionC(now);
-      
-      updateLCDCorridor(now, "A", 252 - (int)((now - modeTimer) / 1000));
-      
-      if (now - modeTimer >= AMBULANCE_ADVANCE) {
-        currentMode = CORRIDOR_B;
+        currentMode = EMERGENCY_CORRIDOR;
+        currentCorridorStep = 0;
         modeTimer = now;
       }
       break;
       
-    case CORRIDOR_B:
-      // Junction A recovers back to normal cycling
-      runNormalCyclingJunctionA(now);
+    case EMERGENCY_CORRIDOR:
+      runEmergencyCorridor(now);
       
-      // Junction B is forced GREEN
-      digitalWrite(RED_B, LOW);
-      digitalWrite(YEL_B, LOW);
-      digitalWrite(GRN_B, HIGH);
-      
-      // Junction C is RED, preparing
-      digitalWrite(RED_C, HIGH);
-      digitalWrite(YEL_C, LOW);
-      digitalWrite(GRN_C, LOW);
-      
-      updateLCDCorridor(now, "B", 150 - (int)((now - modeTimer) / 1000));
-      
-      if (now - modeTimer >= AMBULANCE_ADVANCE) {
-        currentMode = CORRIDOR_C;
-        modeTimer = now;
+      // Calculate remaining ETA dynamically
+      {
+        int elapsedOnSegment = (now - modeTimer) / 1000;
+        int stepBaseTime = baseEtaSeconds / (activeRouteLength - 1);
+        int remainingSteps = (activeRouteLength - 1) - currentCorridorStep;
+        int stepProgressSeconds = stepBaseTime - elapsedOnSegment * (stepBaseTime / (AMBULANCE_ADVANCE / 1000));
+        if (stepProgressSeconds < 0) stepProgressSeconds = 0;
+        etaSeconds = (remainingSteps - 1) * stepBaseTime + stepProgressSeconds;
       }
-      break;
       
-    case CORRIDOR_C:
-      // Junction A & B cycle normally
-      runNormalCyclingJunctionA(now);
-      runNormalCyclingJunctionB(now);
-      
-      // Junction C is forced GREEN
-      digitalWrite(RED_C, LOW);
-      digitalWrite(YEL_C, LOW);
-      digitalWrite(GRN_C, HIGH);
-      
-      updateLCDCorridor(now, "C", 45 - (int)((now - modeTimer) / 1000));
+      updateLCDCorridor(now, String(activeRoutePath[currentCorridorStep]), etaSeconds);
       
       if (now - modeTimer >= AMBULANCE_ADVANCE) {
-        currentMode = ARRIVAL;
+        currentCorridorStep++;
         modeTimer = now;
+        
+        // If we reached the end of the route (hospital 'I'), trigger arrival
+        if (currentCorridorStep >= activeRouteLength - 1) {
+          currentMode = ARRIVAL;
+        }
       }
       break;
       
     case ARRIVAL:
-      // Force all signals to RED for safety, C recovers
       setAllLEDsOff();
       digitalWrite(RED_A, HIGH);
       digitalWrite(RED_B, HIGH);
@@ -318,12 +287,65 @@ void readButtons(unsigned long now) {
   }
   if ((now - debounceTimerAmb) > DEBOUNCE_DELAY) {
     if (readingAmb == HIGH && currentMode == NORMAL) {
+      calculateDynamicRoute();
       currentMode = EMERGENCY_ROUTE;
       modeTimer = now;
       debounceTimerAmb = now + 500;
     }
   }
   lastBtnAmbState = readingAmb;
+}
+
+// Dynamic route lookup based on traffic volume
+void calculateDynamicRoute() {
+  String densityB = getDensityLabel(vehCountB);
+  String densityC = getDensityLabel(vehCountC);
+  
+  if (densityB == "HIGH") {
+    // Route bypasses B and C: A -> D -> G -> H -> I
+    activeRouteStr = "A>D>G>H>I";
+    activeRoutePath[0] = 'A';
+    activeRoutePath[1] = 'D';
+    activeRoutePath[2] = 'G';
+    activeRoutePath[3] = 'H';
+    activeRoutePath[4] = 'I';
+    activeRoutePath[5] = '\0';
+    activeRouteLength = 5;
+    
+    // Total ETA calculations (in seconds)
+    // 4 LOW segments at base time = 4 * 63s = 252 seconds
+    baseEtaSeconds = 252;
+  }
+  else if (densityC == "HIGH") {
+    // Route bypasses C: A -> B -> E -> H -> I
+    activeRouteStr = "A>B>E>H>I";
+    activeRoutePath[0] = 'A';
+    activeRoutePath[1] = 'B';
+    activeRoutePath[2] = 'E';
+    activeRoutePath[3] = 'H';
+    activeRoutePath[4] = 'I';
+    activeRoutePath[5] = '\0';
+    activeRouteLength = 5;
+    
+    // Total ETA: A->B cost depends on B's density
+    int segmentCost = (densityB == "MED") ? 90 : 63;
+    baseEtaSeconds = segmentCost + 63 + 63 + 63; // E, H, I segments are LOW
+  }
+  else {
+    // Standard shortest path: A -> B -> C -> I
+    activeRouteStr = "A>B>C>I";
+    activeRoutePath[0] = 'A';
+    activeRoutePath[1] = 'B';
+    activeRoutePath[2] = 'C';
+    activeRoutePath[3] = 'I';
+    activeRoutePath[4] = '\0';
+    activeRouteLength = 4;
+    
+    int segmentAB = (densityB == "MED") ? 90 : 63;
+    int segmentBC = (densityC == "MED") ? 90 : 63;
+    baseEtaSeconds = segmentAB + segmentBC + 63; // C->I is LOW
+  }
+  etaSeconds = baseEtaSeconds;
 }
 
 // Get string label for traffic density
@@ -358,7 +380,6 @@ void runNormalCyclingJunctionA(unsigned long now) {
     cycleTimerA = now;
     stateA = (SignalState)((stateA + 1) % 3);
   }
-  
   digitalWrite(RED_A, stateA == STATE_RED ? HIGH : LOW);
   digitalWrite(YEL_A, stateA == STATE_YELLOW ? HIGH : LOW);
   digitalWrite(GRN_A, stateA == STATE_GREEN ? HIGH : LOW);
@@ -369,7 +390,6 @@ void runNormalCyclingJunctionB(unsigned long now) {
     cycleTimerB = now;
     stateB = (SignalState)((stateB + 1) % 3);
   }
-  
   digitalWrite(RED_B, stateB == STATE_RED ? HIGH : LOW);
   digitalWrite(YEL_B, stateB == STATE_YELLOW ? HIGH : LOW);
   digitalWrite(GRN_B, stateB == STATE_GREEN ? HIGH : LOW);
@@ -380,10 +400,50 @@ void runNormalCyclingJunctionC(unsigned long now) {
     cycleTimerC = now;
     stateC = (SignalState)((stateC + 1) % 3);
   }
-  
   digitalWrite(RED_C, stateC == STATE_RED ? HIGH : LOW);
   digitalWrite(YEL_C, stateC == STATE_YELLOW ? HIGH : LOW);
   digitalWrite(GRN_C, stateC == STATE_GREEN ? HIGH : LOW);
+}
+
+// Emergency override logic for the active route node
+void runEmergencyCorridor(unsigned long now) {
+  char currentNode = activeRoutePath[currentCorridorStep];
+  char nextNode = activeRoutePath[currentCorridorStep + 1];
+  
+  // Junction A LED control
+  if (currentNode == 'A') {
+    digitalWrite(RED_A, LOW);
+    digitalWrite(YEL_A, LOW);
+    digitalWrite(GRN_A, HIGH); // Overridden
+  } else {
+    runNormalCyclingJunctionA(now);
+  }
+  
+  // Junction B LED control
+  if (currentNode == 'B') {
+    digitalWrite(RED_B, LOW);
+    digitalWrite(YEL_B, LOW);
+    digitalWrite(GRN_B, HIGH); // Overridden
+  } else if (currentNode == 'A' && nextNode == 'B') {
+    digitalWrite(RED_B, HIGH); // Prepare
+    digitalWrite(YEL_B, LOW);
+    digitalWrite(GRN_B, LOW);
+  } else {
+    runNormalCyclingJunctionB(now);
+  }
+  
+  // Junction C LED control
+  if (currentNode == 'C') {
+    digitalWrite(RED_C, LOW);
+    digitalWrite(YEL_C, LOW);
+    digitalWrite(GRN_C, HIGH); // Overridden
+  } else if (currentNode == 'B' && nextNode == 'C') {
+    digitalWrite(RED_C, HIGH); // Prepare
+    digitalWrite(YEL_C, LOW);
+    digitalWrite(GRN_C, LOW);
+  } else {
+    runNormalCyclingJunctionC(now);
+  }
 }
 
 // ============================================================================
@@ -395,7 +455,6 @@ void updateLCDNormal(unsigned long now) {
     lcdTimer = now;
     
     lcd.clear();
-    // Line 1: A:LOW  B:MED
     lcd.setCursor(0, 0);
     lcd.print("A:");
     lcd.print(getDensityLabel(vehCountA));
@@ -403,7 +462,6 @@ void updateLCDNormal(unsigned long now) {
     lcd.print("B:");
     lcd.print(getDensityLabel(vehCountB));
     
-    // Line 2: C:HI   NORMAL
     lcd.setCursor(0, 1);
     lcd.print("C:");
     lcd.print(getDensityLabel(vehCountC));
@@ -416,11 +474,19 @@ void updateLCDEmergencyRoute(unsigned long now) {
   if (now - lcdTimer >= LCD_REFRESH) {
     lcdTimer = now;
     
+    int minutes = baseEtaSeconds / 60;
+    int seconds = baseEtaSeconds % 60;
+    
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.print("ROUTE: A>B>C>I ");
+    lcd.print("ROUTE: ");
+    lcd.print(activeRouteStr);
     lcd.setCursor(0, 1);
-    lcd.print("ETA: 04:12      ");
+    lcd.print("ETA: ");
+    lcd.print(minutes);
+    lcd.print(":");
+    if (seconds < 10) lcd.print("0");
+    lcd.print(seconds);
   }
 }
 
@@ -431,7 +497,6 @@ void updateLCDCorridor(unsigned long now, String position, int remainingSeconds)
     int minutes = remainingSeconds / 60;
     int seconds = remainingSeconds % 60;
     
-    // Prevent negative display
     if (minutes < 0) minutes = 0;
     if (seconds < 0) seconds = 0;
     
@@ -472,3 +537,4 @@ void updateLCDRecovery(unsigned long now) {
     lcd.print("SIGNALS NORMAL  ");
   }
 }
+
