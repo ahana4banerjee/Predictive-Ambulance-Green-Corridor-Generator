@@ -130,10 +130,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 5 — System Interface Design**
 
-- [ ] Define inputs for each module (Traffic Monitor, Tracker, Optimizer, ETA)
-- [ ] Define outputs for each module
-- [ ] Define data interface between STM32 layer and FPGA layer
-- [ ] Define signal states and their mappings
+- [x] Define inputs for each module (Traffic Monitor, Tracker, Optimizer, ETA)
+- [x] Define outputs for each module
+- [x] Define data interface between STM32 layer and FPGA layer
+- [x] Define signal states and their mappings
 
 **Day 6–7 — Documentation**
 
