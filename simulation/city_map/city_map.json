@@ -1,0 +1,35 @@
+{
+  "project_name": "Predictive Ambulance Green Corridor Generator",
+  "map_name": "Grid 3x3 City Map",
+  "dimensions": {
+    "rows": 3,
+    "columns": 3
+  },
+  "nodes": [
+    {"id": "A", "label": "Junction A", "x": 0, "y": 2, "is_hospital": false},
+    {"id": "B", "label": "Junction B", "x": 1, "y": 2, "is_hospital": false},
+    {"id": "C", "label": "Junction C", "x": 2, "y": 2, "is_hospital": false},
+    {"id": "D", "label": "Junction D", "x": 0, "y": 1, "is_hospital": false},
+    {"id": "E", "label": "Junction E", "x": 1, "y": 1, "is_hospital": false},
+    {"id": "F", "label": "Junction F", "x": 2, "y": 1, "is_hospital": false},
+    {"id": "G", "label": "Junction G", "x": 0, "y": 0, "is_hospital": false},
+    {"id": "H", "label": "Junction H", "x": 1, "y": 0, "is_hospital": false},
+    {"id": "I", "label": "Junction I (Hospital)", "x": 2, "y": 0, "is_hospital": true}
+  ],
+  "edges": [
+    {"from": "A", "to": "B", "distance": 1.0},
+    {"from": "B", "to": "C", "distance": 1.0},
+    {"from": "D", "to": "E", "distance": 1.0},
+    {"from": "E", "to": "F", "distance": 1.0},
+    {"from": "G", "to": "H", "distance": 1.0},
+    {"from": "H", "to": "I", "distance": 1.0},
+    {"from": "A", "to": "D", "distance": 1.0},
+    {"from": "D", "to": "G", "distance": 1.0},
+    {"from": "B", "to": "E", "distance": 1.0},
+    {"from": "E", "to": "H", "distance": 1.0},
+    {"from": "C", "to": "F", "distance": 1.0},
+    {"from": "F", "to": "I", "distance": 1.0}
+  ],
+  "ambulance_start_nodes": ["A", "B", "C", "D", "E", "F", "G", "H"],
+  "destination_node": "I"
+}

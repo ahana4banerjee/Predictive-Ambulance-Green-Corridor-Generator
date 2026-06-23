@@ -102,18 +102,18 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 1 — Environment Setup**
 
-- [ ] Create project folder structure (all directories and placeholder files)
-- [ ] Create GitHub repository and push initial structure
-- [ ] Install and verify Vivado is operational
-- [ ] Install and verify STM32CubeIDE is operational
-- [ ] Create and verify Tinkercad account access
+- [x] Create project folder structure (all directories and placeholder files)
+- [x] Create GitHub repository and push initial structure
+- [x] Install and verify Vivado is operational
+- [x] Install and verify STM32CubeIDE is operational
+- [x] Create and verify Tinkercad account access
 
 **Day 2 — City Network Design**
 
-- [ ] Define the 3×3 junction grid (A through I)
-- [ ] Document all road connections (bidirectional edges)
-- [ ] Assign Hospital to Junction I
-- [ ] Define possible ambulance starting positions (any junction except I)
+- [x] Define the 3×3 junction grid (A through I)
+- [x] Document all road connections (bidirectional edges)
+- [x] Assign Hospital to Junction I
+- [x] Define possible ambulance starting positions (any junction except I)
 
 **Day 3 — Route and Intersection Definitions**
 
