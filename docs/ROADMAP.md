@@ -93,10 +93,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 ### Goals
 
-- [ ] Establish complete project design and documentation
-- [ ] Finalize the 9-junction city network with all road connections
-- [ ] Define all system inputs, outputs, and data interfaces
-- [ ] Install and verify all development tools
+- [x] Establish complete project design and documentation
+- [x] Finalize the 9-junction city network with all road connections
+- [x] Define all system inputs, outputs, and data interfaces
+- [x] Install and verify all development tools
 
 ### Tasks
 
@@ -137,26 +137,26 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 6–7 — Documentation**
 
-- [ ] Complete SRS document
-- [ ] Complete System Architecture document
-- [ ] Create architecture diagrams
-- [ ] Review all documents for internal consistency
+- [x] Complete SRS document
+- [x] Complete System Architecture document
+- [x] Create architecture diagrams
+- [x] Review all documents for internal consistency
 
 ### Expected Outputs
 
-- [ ] Finalized city network topology document
-- [ ] Traffic density classification table
-- [ ] Complete SRS with all 10 functional requirements
-- [ ] System Architecture document with module definitions and FSM designs
-- [ ] All development tools installed and verified
+- [x] Finalized city network topology document
+- [x] Traffic density classification table
+- [x] Complete SRS with all 10 functional requirements
+- [x] System Architecture document with module definitions and FSM designs
+- [x] All development tools installed and verified
 
 ### Validation Checks
 
-- [ ] Can you draw the 9-junction grid from memory with all connections?
-- [ ] Can you list at least 3 different routes from Junction A to Hospital (I)?
-- [ ] Are density thresholds documented and unambiguous?
-- [ ] Do all documents reference the same junction labels, module names, and signal states?
-- [ ] Does every module have clearly defined inputs and outputs?
+- [x] Can you draw the 9-junction grid from memory with all connections?
+- [x] Can you list at least 3 different routes from Junction A to Hospital (I)?
+- [x] Are density thresholds documented and unambiguous?
+- [x] Do all documents reference the same junction labels, module names, and signal states?
+- [x] Does every module have clearly defined inputs and outputs?
 
 ---
 

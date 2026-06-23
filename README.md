@@ -223,7 +223,7 @@ Predictive-Ambulance-Green-Corridor-Generator/
 
 | Week | Focus | Key Deliverable | Status |
 |---|---|---|---|
-| **Week 1** | 📐 Project Foundation | Complete design documentation, city network finalized, tools installed | ☐ |
+| **Week 1** | 📐 Project Foundation | Complete design documentation, city network finalized, tools installed | ✅ |
 | **Week 2** | 🧠 STM32 Intelligence | Console output: traffic status, selected route, ETA, ambulance position | ☐ |
 | **Week 3** | ⚡ Vivado Signal Control | Waveforms: normal operation, emergency override, corridor generation | ☐ |
 | **Week 4** | 💡 Tinkercad Simulation | Working visual demo: LEDs change on ambulance button press | ☐ |
@@ -337,6 +337,20 @@ flowchart LR
 | [System Architecture Document](docs/SYSTEM_ARCHITECTURE.md) | Module design, FPGA architecture, tool allocation, network topology |
 | [Implementation Guide](docs/IMPLEMENTATION_GUIDE.md) | Step-by-step build instructions for each tool and module |
 | [Development Roadmap](docs/ROADMAP.md) | 6-week plan with daily tasks, validation checks, and milestone gates |
+
+### 🧪 Simulation & Verification (Week 1 Foundation)
+
+| File / Script | Description |
+|---|---|
+| [City Map Design](simulation/city_map/city_map_documentation.md) | Details the 3x3 layout, nodes, and bidirectional edges |
+| [City Map Config](simulation/city_map/city_map.json) | Structured JSON representation of the city map network |
+| [Map Verification Script](simulation/city_map/verify_map.py) | Python validation tool checking node labels, hospital location, and connectivity |
+| [Routing Definitions](simulation/route_data/routes_definition.md) | Path lists, road segment distances, and ambulance movement model |
+| [Routing JSON Lookup](simulation/route_data/routes.json) | Pre-calculated route path lookup tables from A-H to I |
+| [Dijkstra Pathfinder Engine](simulation/route_data/pathfinder.py) | Dijkstra-based traffic-aware router and traversal simulator in Python |
+| [Traffic Density Model](simulation/traffic_data/traffic_density_model.md) | Defines density thresholds (LOW/MED/HIGH) and route cost weightings |
+| [Traffic Scenarios JSON](simulation/traffic_data/traffic_scenarios.json) | 5 structured test cases containing congestion snapshots |
+| [Traffic Scenarios Tester](simulation/traffic_data/test_scenarios.py) | Automated test runner verifying path choices across the 5 scenarios |
 
 ---
 
