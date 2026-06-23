@@ -117,10 +117,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 3 — Route and Intersection Definitions**
 
-- [ ] List all possible routes from every junction to Hospital (I)
-- [ ] Define road distances between adjacent junctions
-- [ ] Identify which junctions have traffic signals (all 9)
-- [ ] Define ambulance movement model (junction-to-junction traversal)
+- [x] List all possible routes from every junction to Hospital (I)
+- [x] Define road distances between adjacent junctions
+- [x] Identify which junctions have traffic signals (all 9)
+- [x] Define ambulance movement model (junction-to-junction traversal)
 
 **Day 4 — Traffic Density Model**
 
