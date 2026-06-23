@@ -124,9 +124,9 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 4 — Traffic Density Model**
 
-- [ ] Define density thresholds: LOW (0–10), MEDIUM (11–25), HIGH (26+)
-- [ ] Create sample traffic scenarios for testing
-- [ ] Document how density affects route selection weighting
+- [x] Define density thresholds: LOW (0–10), MEDIUM (11–25), HIGH (26+)
+- [x] Create sample traffic scenarios for testing
+- [x] Document how density affects route selection weighting
 
 **Day 5 — System Interface Design**
 
