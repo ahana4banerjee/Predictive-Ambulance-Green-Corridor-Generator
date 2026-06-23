@@ -1,0 +1,47 @@
+{
+  "map_name": "Grid 3x3 City Map",
+  "destination": "I",
+  "routes_by_start": {
+    "A": [
+      {"path": ["A", "B", "C", "F", "I"], "distance": 4.0},
+      {"path": ["A", "B", "E", "F", "I"], "distance": 4.0},
+      {"path": ["A", "B", "E", "H", "I"], "distance": 4.0},
+      {"path": ["A", "D", "E", "F", "I"], "distance": 4.0},
+      {"path": ["A", "D", "E", "H", "I"], "distance": 4.0},
+      {"path": ["A", "D", "G", "H", "I"], "distance": 4.0}
+    ],
+    "B": [
+      {"path": ["B", "C", "F", "I"], "distance": 3.0},
+      {"path": ["B", "E", "F", "I"], "distance": 3.0},
+      {"path": ["B", "E", "H", "I"], "distance": 3.0}
+    ],
+    "C": [
+      {"path": ["C", "F", "I"], "distance": 2.0},
+      {"path": ["C", "B", "E", "F", "I"], "distance": 4.0},
+      {"path": ["C", "B", "E", "H", "I"], "distance": 4.0}
+    ],
+    "D": [
+      {"path": ["D", "E", "F", "I"], "distance": 3.0},
+      {"path": ["D", "E", "H", "I"], "distance": 3.0},
+      {"path": ["D", "G", "H", "I"], "distance": 3.0}
+    ],
+    "E": [
+      {"path": ["E", "F", "I"], "distance": 2.0},
+      {"path": ["E", "H", "I"], "distance": 2.0},
+      {"path": ["E", "D", "G", "H", "I"], "distance": 4.0}
+    ],
+    "F": [
+      {"path": ["F", "I"], "distance": 1.0},
+      {"path": ["F", "E", "H", "I"], "distance": 3.0}
+    ],
+    "G": [
+      {"path": ["G", "H", "I"], "distance": 2.0},
+      {"path": ["G", "D", "E", "F", "I"], "distance": 4.0},
+      {"path": ["G", "D", "E", "H", "I"], "distance": 4.0}
+    ],
+    "H": [
+      {"path": ["H", "I"], "distance": 1.0},
+      {"path": ["H", "E", "F", "I"], "distance": 3.0}
+    ]
+  }
+}
