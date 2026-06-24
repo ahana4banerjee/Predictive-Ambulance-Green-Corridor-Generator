@@ -194,16 +194,16 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 4 — Route Optimizer**
 
-- [ ] Create `route_optimizer.c`
-- [ ] Implement road distance data for all junction connections
-- [ ] Implement route evaluation using distance + traffic density weighting
-- [ ] Output: selected route as a sequence of junctions
+- [x] Create `route_optimizer.c`
+- [x] Implement road distance data for all junction connections
+- [x] Implement route evaluation using distance + traffic density weighting
+- [x] Output: selected route as a sequence of junctions
 
 **Day 5 — Route Validation**
 
-- [ ] Test: when A–B–C route is congested, optimizer should select A–D–G–H–I
-- [ ] Test: when all routes have LOW traffic, optimizer should select shortest path
-- [ ] Verify at least 3 different starting positions produce correct routes
+- [x] Test: when A–B–C route is congested, optimizer should select A–D–G–H–I
+- [x] Test: when all routes have LOW traffic, optimizer should select shortest path
+- [x] Verify at least 3 different starting positions produce correct routes
 
 **Day 6 — ETA Calculator**
 

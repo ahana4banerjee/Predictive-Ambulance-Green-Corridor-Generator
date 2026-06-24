@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 run_stm32_tests.py
-Mocks the C logic for the STM32 Traffic Monitor and Ambulance Tracker modules,
-running the automated test suite to verify correctness of both modules.
+Mocks the C logic for the STM32 Traffic Monitor, Ambulance Tracker, and Route Optimizer modules,
+running the automated test suite to verify correctness of all three modules.
 """
 
 # ============================================================================
@@ -141,6 +141,100 @@ def ambulance_tracker_print_status(state):
     print("=========================================")
 
 # ============================================================================
+# MODULE 3: ROUTE OPTIMIZER MOCK
+# ============================================================================
+edges_list = [
+    (NODE_A, NODE_B, 1.0),
+    (NODE_B, NODE_C, 1.0),
+    (NODE_D, NODE_E, 1.0),
+    (NODE_E, NODE_F, 1.0),
+    (NODE_G, NODE_H, 1.0),
+    (NODE_H, NODE_I, 1.0),
+    (NODE_A, NODE_D, 1.0),
+    (NODE_D, NODE_G, 1.0),
+    (NODE_B, NODE_E, 1.0),
+    (NODE_E, NODE_H, 1.0),
+    (NODE_C, NODE_F, 1.0),
+    (NODE_F, NODE_I, 1.0)
+]
+
+def get_traffic_penalty(count):
+    if count <= 10:
+        return 0.0
+    elif count <= 25:
+        return 2.0
+    else:
+        return 5.0
+
+def route_optimizer_find_path(traffic, start, route):
+    dist = [float('inf')] * 9
+    visited = [False] * 9
+    prev = [NODE_NONE] * 9
+    
+    dist[start] = 0.0
+    
+    for _ in range(9):
+        u = -1
+        min_dist = float('inf')
+        for i in range(9):
+            if not visited[i] and dist[i] < min_dist:
+                min_dist = dist[i]
+                u = i
+                
+        if u == -1 or u == NODE_I:
+            break
+            
+        visited[u] = True
+        
+        for from_n, to_n, base_dist in edges_list:
+            v = NODE_NONE
+            if from_n == u:
+                v = to_n
+            elif to_n == u:
+                v = from_n
+                
+            if v != NODE_NONE and not visited[v]:
+                penalty = get_traffic_penalty(traffic.vehicle_counts[v])
+                weight = base_dist + penalty
+                
+                if dist[u] + weight < dist[v]:
+                    dist[v] = dist[u] + weight
+                    prev[v] = u
+                    
+    if dist[NODE_I] == float('inf'):
+        route.path_length = 0
+        route.total_cost = float('inf')
+        return
+        
+    route.total_cost = dist[NODE_I]
+    temp_path = []
+    curr = NODE_I
+    while curr != NODE_NONE:
+        temp_path.append(curr)
+        curr = prev[curr]
+        
+    temp_path.reverse()
+    route.path_length = len(temp_path)
+    for i in range(route.path_length):
+        route.path[i] = temp_path[i]
+
+def route_optimizer_print_route(route):
+    if route.path_length == 0:
+        print("=========================================")
+        print("         No Route Available             ")
+        print("=========================================")
+        return
+        
+    print("=========================================")
+    print("         Optimized Route Details         ")
+    print("=========================================")
+    print("Optimal Path       : ", end="")
+    path_chars = [node_to_char(route.path[i]) for i in range(route.path_length)]
+    print(" -> ".join(path_chars))
+    print(f"Total Cost         : {route.total_cost:.2f}")
+    print("=========================================")
+
+# ============================================================================
 # RUNNER LOGIC
 # ============================================================================
 failed_tests = 0
@@ -264,6 +358,75 @@ def test_tracker_movement():
     ambulance_tracker_print_status(state)
     return True
 
+# Route Optimizer tests
+def test_shortest_path_low_traffic():
+    traffic = TrafficState()
+    traffic_monitor_init(traffic)
+    
+    route = RouteDetails()
+    route_optimizer_find_path(traffic, NODE_A, route)
+    
+    expected = [NODE_A, NODE_B, NODE_C, NODE_F, NODE_I]
+    if route.path_length != 5: return False
+    for i in range(5):
+        if route.path[i] != expected[i]: return False
+    if route.total_cost != 4.0: return False
+    return True
+
+def test_bypass_congested_route():
+    traffic = TrafficState()
+    traffic_monitor_init(traffic)
+    
+    # Congest Junction B, C and E to force path G-H-I
+    traffic_monitor_set_vehicle_count(traffic, NODE_B, 35)
+    traffic_monitor_set_vehicle_count(traffic, NODE_C, 48)
+    traffic_monitor_set_vehicle_count(traffic, NODE_E, 15)
+    
+    route = RouteDetails()
+    route_optimizer_find_path(traffic, NODE_A, route)
+    
+    expected = [NODE_A, NODE_D, NODE_G, NODE_H, NODE_I]
+    
+    print()
+    route_optimizer_print_route(route)
+    
+    if route.path_length != 5: return False
+    for i in range(5):
+        if route.path[i] != expected[i]: return False
+    if route.total_cost != 4.0: return False
+    return True
+
+def test_different_start_positions():
+    traffic = TrafficState()
+    traffic_monitor_init(traffic)
+    
+    # Start at E, B and F congested
+    traffic_monitor_set_vehicle_count(traffic, NODE_B, 30)
+    traffic_monitor_set_vehicle_count(traffic, NODE_F, 30)
+    
+    route1 = RouteDetails()
+    route_optimizer_find_path(traffic, NODE_E, route1)
+    
+    expected1 = [NODE_E, NODE_H, NODE_I]
+    if route1.path_length != 3: return False
+    for i in range(3):
+        if route1.path[i] != expected1[i]: return False
+    if route1.total_cost != 2.0: return False
+    
+    # Start at C, Reset traffic first, then let F be congested
+    traffic_monitor_init(traffic)
+    traffic_monitor_set_vehicle_count(traffic, NODE_F, 35)
+    
+    route2 = RouteDetails()
+    route_optimizer_find_path(traffic, NODE_C, route2)
+    
+    expected2 = [NODE_C, NODE_B, NODE_E, NODE_H, NODE_I]
+    if route2.path_length != 5: return False
+    for i in range(5):
+        if route2.path[i] != expected2[i]: return False
+    if route2.total_cost != 4.0: return False
+    return True
+
 def main():
     print("=========================================")
     print("     STM32 Modules Unified Test Suite    ")
@@ -277,6 +440,11 @@ def main():
     print("\n--- 2. Ambulance Tracker Module ---")
     run_test("test_tracker_init", test_tracker_init)
     run_test("test_tracker_movement", test_tracker_movement)
+    
+    print("\n--- 3. Route Optimizer Module ---")
+    run_test("test_shortest_path_low_traffic", test_shortest_path_low_traffic)
+    run_test("test_bypass_congested_route", test_bypass_congested_route)
+    run_test("test_different_start_positions", test_different_start_positions)
     
     print("\n=========================================")
     print("Test Suite Completed: ", end="")

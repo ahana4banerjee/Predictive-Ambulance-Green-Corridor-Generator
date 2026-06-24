@@ -20,6 +20,8 @@
 #include "main.h"
 #include "traffic_monitor.h"
 #include "ambulance_tracker.h"
+#include "route_optimizer.h"
+
 
 
 
@@ -97,8 +99,14 @@ int main(void)
   TrafficMonitor_UpdateDensity(&state);
   TrafficMonitor_PrintReport(&state);
 
-  AmbulanceState ambulance;
-  AmbulanceTracker_Init(&ambulance, NODE_A);
+  TrafficState traffic;
+  TrafficMonitor_Init(&traffic);
+
+  // Congest B, C, and set E to medium to block normal routes
+  TrafficMonitor_SetVehicleCount(&traffic, NODE_B, 35); // HIGH (penalty 5)
+  TrafficMonitor_SetVehicleCount(&traffic, NODE_C, 48); // HIGH (penalty 5)
+  TrafficMonitor_SetVehicleCount(&traffic, NODE_E, 15); // MEDIUM (penalty 2)
+  TrafficMonitor_UpdateDensity(&traffic);
 
   // Define mock route details (A -> B -> C -> F -> I)
   RouteDetails route;
@@ -109,6 +117,14 @@ int main(void)
   route.path[4] = NODE_I;
   route.path_length = 5;
   route.total_cost = 4.0f;
+
+  RouteOptimizer_FindPath(&traffic, NODE_A, &route);
+
+  // Print the generated route details
+  RouteOptimizer_PrintRoute(&route);
+
+  AmbulanceState ambulance;
+  AmbulanceTracker_Init(&ambulance, NODE_A);
 
   AmbulanceTracker_SetRoute(&ambulance, &route);
 
@@ -125,9 +141,6 @@ int main(void)
 
   // Print status on arrival (Junction I)
   AmbulanceTracker_PrintStatus(&ambulance);
-  /* USER CODE END 2 */
-
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
