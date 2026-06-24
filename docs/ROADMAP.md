@@ -214,25 +214,25 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 7 — Integration Testing**
 
-- [ ] Run complete cycle: traffic simulation → route selection → ambulance tracking → ETA
-- [ ] Verify serial monitor output shows all 4 data elements
-- [ ] Test with at least 2 different traffic scenarios
+- [x] Run complete cycle: traffic simulation → route selection → ambulance tracking → ETA
+- [x] Verify serial monitor output shows all 4 data elements
+- [x] Test with at least 2 different traffic scenarios
 
 ### Expected Outputs
 
-- [ ] `traffic_monitor.c` — classifies density at all 9 junctions
-- [ ] `ambulance_tracker.c` — tracks position through selected route
-- [ ] `route_optimizer.c` — selects optimal route based on distance + traffic
-- [ ] `eta_calculator.c` — computes ETA and per-junction arrival times
-- [ ] Serial monitor output showing: Traffic Status, Selected Route, Ambulance Position, ETA
+- [x] `traffic_monitor.c` — classifies density at all 9 junctions
+- [x] `ambulance_tracker.c` — tracks position through selected route
+- [x] `route_optimizer.c` — selects optimal route based on distance + traffic
+- [x] `eta_calculator.c` — computes ETA and per-junction arrival times
+- [x] Serial monitor output showing: Traffic Status, Selected Route, Ambulance Position, ETA
 
 ### Validation Checks
 
-- [ ] Does the Traffic Monitor correctly classify 0→LOW, 15→MEDIUM, 30→HIGH?
-- [ ] Does the Route Optimizer avoid HIGH-density junctions when alternatives exist?
-- [ ] Does the Ambulance Tracker update position each cycle and decrease distance remaining?
-- [ ] Does the ETA decrease as the ambulance approaches the hospital?
-- [ ] Can you run the entire system with different starting junctions and get reasonable results?
+- [x] Does the Traffic Monitor correctly classify 0→LOW, 15→MEDIUM, 30→HIGH?
+- [x] Does the Route Optimizer avoid HIGH-density junctions when alternatives exist?
+- [x] Does the Ambulance Tracker update position each cycle and decrease distance remaining?
+- [x] Does the ETA decrease as the ambulance approaches the hospital?
+- [x] Can you run the entire system with different starting junctions and get reasonable results?
 
 ---
 
