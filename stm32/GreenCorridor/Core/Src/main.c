@@ -19,6 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "traffic_monitor.h"
+#include "ambulance_tracker.h"
+
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -94,6 +96,36 @@ int main(void)
   TrafficMonitor_SetVehicleCount(&state, NODE_C, 48);
   TrafficMonitor_UpdateDensity(&state);
   TrafficMonitor_PrintReport(&state);
+
+  AmbulanceState ambulance;
+  AmbulanceTracker_Init(&ambulance, NODE_A);
+
+  // Define mock route details (A -> B -> C -> F -> I)
+  RouteDetails route;
+  route.path[0] = NODE_A;
+  route.path[1] = NODE_B;
+  route.path[2] = NODE_C;
+  route.path[3] = NODE_F;
+  route.path[4] = NODE_I;
+  route.path_length = 5;
+  route.total_cost = 4.0f;
+
+  AmbulanceTracker_SetRoute(&ambulance, &route);
+
+  // Move step-by-step
+  AmbulanceTracker_MoveToNext(&ambulance, NODE_B);
+  AmbulanceTracker_MoveToNext(&ambulance, NODE_C);
+  AmbulanceTracker_MoveToNext(&ambulance, NODE_F);
+
+  // Print status before arrival (at Junction F)
+  AmbulanceTracker_PrintStatus(&ambulance);
+
+  // Move to Hospital I (Arrival)
+  AmbulanceTracker_MoveToNext(&ambulance, NODE_I);
+
+  // Print status on arrival (Junction I)
+  AmbulanceTracker_PrintStatus(&ambulance);
+  /* USER CODE END 2 */
 
 
   /* USER CODE END 2 */
