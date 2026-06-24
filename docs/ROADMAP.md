@@ -207,10 +207,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 6 — ETA Calculator**
 
-- [ ] Create `eta_calculator.c`
-- [ ] Implement ETA = distance remaining ÷ speed
-- [ ] Implement per-junction arrival time prediction
-- [ ] Output: ETA in minutes and seconds
+- [x] Create `eta_calculator.c`
+- [x] Implement ETA = distance remaining ÷ speed
+- [x] Implement per-junction arrival time prediction
+- [x] Output: ETA in minutes and seconds
 
 **Day 7 — Integration Testing**
 

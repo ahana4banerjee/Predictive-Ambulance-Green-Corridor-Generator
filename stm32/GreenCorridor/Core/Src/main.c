@@ -21,9 +21,7 @@
 #include "traffic_monitor.h"
 #include "ambulance_tracker.h"
 #include "route_optimizer.h"
-
-
-
+#include "eta_calculator.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -92,23 +90,25 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
   TrafficState state;
+  TrafficState traffic;
+
   TrafficMonitor_Init(&state);
+  TrafficMonitor_Init(&traffic);
+
   TrafficMonitor_SetVehicleCount(&state, NODE_A, 35);
   TrafficMonitor_SetVehicleCount(&state, NODE_B, 12);
   TrafficMonitor_SetVehicleCount(&state, NODE_C, 48);
   TrafficMonitor_UpdateDensity(&state);
   TrafficMonitor_PrintReport(&state);
 
-  TrafficState traffic;
-  TrafficMonitor_Init(&traffic);
-
-  // Congest B, C, and set E to medium to block normal routes
-  TrafficMonitor_SetVehicleCount(&traffic, NODE_B, 35); // HIGH (penalty 5)
-  TrafficMonitor_SetVehicleCount(&traffic, NODE_C, 48); // HIGH (penalty 5)
-  TrafficMonitor_SetVehicleCount(&traffic, NODE_E, 15); // MEDIUM (penalty 2)
+  // Set mixed traffic: B is MEDIUM (90s), C is HIGH (150s), others are LOW (60s)
+  TrafficMonitor_SetVehicleCount(&traffic, NODE_B, 12);
+  TrafficMonitor_SetVehicleCount(&traffic, NODE_C, 48);
   TrafficMonitor_UpdateDensity(&traffic);
 
-  // Define mock route details (A -> B -> C -> F -> I)
+  AmbulanceState ambulance;
+  AmbulanceTracker_Init(&ambulance, NODE_A);
+
   RouteDetails route;
   route.path[0] = NODE_A;
   route.path[1] = NODE_B;
@@ -123,7 +123,6 @@ int main(void)
   // Print the generated route details
   RouteOptimizer_PrintRoute(&route);
 
-  AmbulanceState ambulance;
   AmbulanceTracker_Init(&ambulance, NODE_A);
 
   AmbulanceTracker_SetRoute(&ambulance, &route);
@@ -141,7 +140,14 @@ int main(void)
 
   // Print status on arrival (Junction I)
   AmbulanceTracker_PrintStatus(&ambulance);
+
+
+  uint32_t eta = ETACalculator_CalculateETA(&ambulance, &route, &traffic);
+
+  // Print the ETA report
+  ETACalculator_PrintETA(eta);
   /* USER CODE END 2 */
+
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
