@@ -224,7 +224,7 @@ Predictive-Ambulance-Green-Corridor-Generator/
 | Week | Focus | Key Deliverable | Status |
 |---|---|---|---|
 | **Week 1** | 📐 Project Foundation | Complete design documentation, city network finalized, tools installed | ✅ |
-| **Week 2** | 🧠 STM32 Intelligence | Console output: traffic status, selected route, ETA, ambulance position | ☐ |
+| **Week 2** | 🧠 STM32 Intelligence | Console output: traffic status, selected route, ETA, ambulance position | ✅ |
 | **Week 3** | ⚡ Vivado Signal Control | Waveforms: normal operation, emergency override, corridor generation | ☐ |
 | **Week 4** | 💡 Tinkercad Simulation | Working visual demo: LEDs change on ambulance button press | ☐ |
 | **Week 5** | 📊 Integration & Analytics | Dashboard: time saved, efficiency, comparison graphs | ☐ |
@@ -351,6 +351,18 @@ flowchart LR
 | [Traffic Density Model](simulation/traffic_data/traffic_density_model.md) | Defines density thresholds (LOW/MED/HIGH) and route cost weightings |
 | [Traffic Scenarios JSON](simulation/traffic_data/traffic_scenarios.json) | 5 structured test cases containing congestion snapshots |
 | [Traffic Scenarios Tester](simulation/traffic_data/test_scenarios.py) | Automated test runner verifying path choices across the 5 scenarios |
+
+### 🧠 STM32 Intelligence Modules (Week 2)
+
+| File / Module | Location / Path | Description |
+|---|---|---|
+| **System Interfaces** | [system_interfaces.h](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/include/system_interfaces.h) | Shared structure defining enums, register bitfields, and the 32-bit SPI frame |
+| **Traffic Monitor** | [traffic_monitor.c](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/TrafficMonitor/traffic_monitor.c) | Monitored count classification: LOW (0–10), MEDIUM (11–25), HIGH (26+) |
+| **Ambulance Tracker** | [ambulance_tracker.c](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/AmbulanceTracker/ambulance_tracker.c) | Tracks current node, hospital destination, speed, and distance segments |
+| **Route Optimizer** | [route_optimizer.c](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/RouteOptimizer/route_optimizer.c) | Dijkstra-based dynamic shortest path algorithm with traffic weight penalties |
+| **ETA Calculator** | [eta_calculator.c](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/ETACalculator/eta_calculator.c) | Sums travel time based on traffic density and predicts per-junction crossings |
+| **C Unit Tests** | [tests/](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/tests/) | Automated unit tests covering boundaries, routing, ETA math, and integration |
+| **Python Test Suite** | [run_stm32_tests.py](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/tests/run_stm32_tests.py) | Executable script modeling and validating the entire STM32 module suite |
 
 ---
 
