@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 run_stm32_tests.py
-Mocks the C logic for the STM32 Traffic Monitor, Ambulance Tracker, and Route Optimizer modules,
-running the automated test suite to verify correctness of all three modules.
+Mocks the C logic for all 4 STM32 modules: Traffic Monitor, Ambulance Tracker,
+Route Optimizer, and ETA Calculator, verifying correctness through an automated test suite.
 """
 
 # ============================================================================
@@ -235,6 +235,80 @@ def route_optimizer_print_route(route):
     print("=========================================")
 
 # ============================================================================
+# MODULE 4: ETA CALCULATOR MOCK
+# ============================================================================
+BASE_TIME_LOW = 60.0
+BASE_TIME_MED = 90.0
+BASE_TIME_HIGH = 150.0
+
+def get_segment_base_time(count):
+    if count <= 10:
+        return BASE_TIME_LOW
+    elif count <= 25:
+        return BASE_TIME_MED
+    else:
+        return BASE_TIME_HIGH
+
+def eta_calculator_calculate_eta(state, route, traffic):
+    if state.current_node == state.destination:
+        return 0
+        
+    current_index = -1
+    for i in range(route.path_length):
+        if route.path[i] == state.current_node:
+            current_index = i
+            break
+            
+    if current_index == -1 or current_index >= route.path_length - 1:
+        return 0
+        
+    total_seconds = 0.0
+    speed = state.speed if state.speed > 0.0 else 1.0
+    
+    for i in range(current_index, route.path_length - 1):
+        target = route.path[i + 1]
+        base_time = get_segment_base_time(traffic.vehicle_counts[target])
+        total_seconds += (base_time / speed)
+        
+    return int(total_seconds)
+
+def eta_calculator_predict_arrival_times(state, route, traffic, arrival_times):
+    # Initialize all to 0
+    for i in range(9):
+        arrival_times[i] = 0
+        
+    if state.current_node == state.destination:
+        return
+        
+    current_index = -1
+    for i in range(route.path_length):
+        if route.path[i] == state.current_node:
+            current_index = i
+            break
+            
+    if current_index == -1:
+        return
+        
+    running_sum = 0.0
+    speed = state.speed if state.speed > 0.0 else 1.0
+    
+    for i in range(current_index, route.path_length - 1):
+        target = route.path[i + 1]
+        base_time = get_segment_base_time(traffic.vehicle_counts[target])
+        running_sum += (base_time / speed)
+        arrival_times[target] = int(running_sum)
+
+def eta_calculator_print_eta(eta_seconds):
+    minutes = eta_seconds // 60
+    seconds = eta_seconds % 60
+    print("=========================================")
+    print("            Estimated ETA Report         ")
+    print("=========================================")
+    print(f"Remaining Time     : {minutes:02d} min {seconds:02d} sec")
+    print(f"Total Seconds      : {eta_seconds} s")
+    print("=========================================")
+
+# ============================================================================
 # RUNNER LOGIC
 # ============================================================================
 failed_tests = 0
@@ -427,6 +501,86 @@ def test_different_start_positions():
     if route2.total_cost != 4.0: return False
     return True
 
+# ETA Calculator tests
+def test_eta_low_traffic():
+    state = AmbulanceState()
+    state.current_node = NODE_A
+    state.destination = NODE_I
+    state.speed = 1.0
+    state.distance_remaining = 4
+    state.emergency_active = True
+    
+    route = RouteDetails()
+    route.path = [NODE_A, NODE_B, NODE_C, NODE_F, NODE_I]
+    route.path_length = 5
+    route.total_cost = 4.0
+    
+    traffic = TrafficState()
+    traffic_monitor_init(traffic)
+    
+    eta = eta_calculator_calculate_eta(state, route, traffic)
+    if eta != 240: return False  # 4 * 60s = 240 seconds
+    
+    arrival_times = [0] * 9
+    eta_calculator_predict_arrival_times(state, route, traffic, arrival_times)
+    
+    if arrival_times[NODE_B] != 60: return False
+    if arrival_times[NODE_C] != 120: return False
+    if arrival_times[NODE_F] != 180: return False
+    if arrival_times[NODE_I] != 240: return False
+    return True
+
+def test_eta_mixed_traffic():
+    state = AmbulanceState()
+    state.current_node = NODE_A
+    state.destination = NODE_I
+    state.speed = 1.0
+    state.distance_remaining = 4
+    state.emergency_active = True
+    
+    route = RouteDetails()
+    route.path = [NODE_A, NODE_B, NODE_C, NODE_F, NODE_I]
+    route.path_length = 5
+    route.total_cost = 4.0
+    
+    traffic = TrafficState()
+    traffic_monitor_init(traffic)
+    
+    # Set mixed: B MED (90s), C HIGH (150s), F LOW (60s), I LOW (60s)
+    traffic_monitor_set_vehicle_count(traffic, NODE_B, 12)
+    traffic_monitor_set_vehicle_count(traffic, NODE_C, 48)
+    traffic_monitor_set_vehicle_count(traffic, NODE_F, 5)
+    
+    eta = eta_calculator_calculate_eta(state, route, traffic)
+    # 90 + 150 + 60 + 60 = 360 seconds
+    if eta != 360: return False
+    
+    arrival_times = [0] * 9
+    eta_calculator_predict_arrival_times(state, route, traffic, arrival_times)
+    if arrival_times[NODE_B] != 90: return False
+    if arrival_times[NODE_C] != 240: return False
+    if arrival_times[NODE_F] != 300: return False
+    if arrival_times[NODE_I] != 360: return False
+    
+    print()
+    eta_calculator_print_eta(eta)
+    
+    # Step to B
+    state.current_node = NODE_B
+    state.distance_remaining = 3
+    
+    eta_B = eta_calculator_calculate_eta(state, route, traffic)
+    # Remaining: B-C (150s) + C-F (60s) + F-I (60s) = 270 seconds
+    if eta_B != 270: return False
+    
+    arrival_times_B = [0] * 9
+    eta_calculator_predict_arrival_times(state, route, traffic, arrival_times_B)
+    if arrival_times_B[NODE_C] != 150: return False
+    if arrival_times_B[NODE_F] != 210: return False
+    if arrival_times_B[NODE_I] != 270: return False
+    
+    return True
+
 def main():
     print("=========================================")
     print("     STM32 Modules Unified Test Suite    ")
@@ -445,6 +599,10 @@ def main():
     run_test("test_shortest_path_low_traffic", test_shortest_path_low_traffic)
     run_test("test_bypass_congested_route", test_bypass_congested_route)
     run_test("test_different_start_positions", test_different_start_positions)
+    
+    print("\n--- 4. ETA Calculator Module ---")
+    run_test("test_eta_low_traffic", test_eta_low_traffic)
+    run_test("test_eta_mixed_traffic", test_eta_mixed_traffic)
     
     print("\n=========================================")
     print("Test Suite Completed: ", end="")
