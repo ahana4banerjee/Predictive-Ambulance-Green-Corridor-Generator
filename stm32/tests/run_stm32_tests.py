@@ -581,6 +581,68 @@ def test_eta_mixed_traffic():
     
     return True
 
+def run_integration_scenario(name, start_node, vehicle_counts):
+    print("\n" + "=" * 57)
+    print(f" RUNNING INTEGRATION SCENARIO: {name}")
+    print("=" * 57)
+    
+    # 1. Initialize and Update Traffic
+    traffic = TrafficState()
+    traffic_monitor_init(traffic)
+    for i in range(9):
+        traffic_monitor_set_vehicle_count(traffic, i, vehicle_counts[i])
+    traffic_monitor_update_density(traffic)
+    traffic_monitor_print_report(traffic)
+    
+    # 2. Find Optimized Route
+    route = RouteDetails()
+    route_optimizer_find_path(traffic, start_node, route)
+    route_optimizer_print_route(route)
+    
+    if route.path_length == 0:
+        print(f"ERROR: No route found from {node_to_char(start_node)} to hospital!")
+        return
+        
+    # 3. Initialize Ambulance Tracker
+    ambulance = AmbulanceState()
+    ambulance_tracker_init(ambulance, start_node)
+    ambulance_tracker_set_route(ambulance, route)
+    
+    # 4. Simulate Ambulance Traversal Step-by-Step
+    print("\n--- SIMULATING AMBULANCE TRAVERSAL ---")
+    for i in range(route.path_length):
+        step_node = route.path[i]
+        if i > 0:
+            ambulance_tracker_move_to_next(ambulance, step_node)
+            
+        eta = eta_calculator_calculate_eta(ambulance, route, traffic)
+        arrival_times = [0] * 9
+        eta_calculator_predict_arrival_times(ambulance, route, traffic, arrival_times)
+        
+        print(f"\n[SERIAL MONITOR OUTPUT - JUNCTION {node_to_char(ambulance.current_node)}]")
+        print("-" * 41)
+        print("1. Traffic Density (Active Route Nodes):")
+        for k in range(i, route.path_length):
+            r_node = route.path[k]
+            density_lbl = density_to_string(traffic.density_levels[r_node])
+            print(f"   Junction {node_to_char(r_node)} : {density_lbl} ({traffic.vehicle_counts[r_node]} vehicles)")
+            
+        print("2. Selected Path   : " + " -> ".join([node_to_char(route.path[k]) for k in range(route.path_length)]))
+        next_tgt = node_to_char(route.path[i + 1]) if i < route.path_length - 1 else 'I'
+        print(f"3. Active Position : Current: {node_to_char(ambulance.current_node)} | Next Target: {next_tgt}")
+        print(f"   Dist Remaining  : {ambulance.distance_remaining} segments")
+        
+        eta_min = eta // 60
+        eta_sec = eta % 60
+        print(f"4. Live ETA        : {eta_min:02d}:{eta_sec:02d} ({eta} seconds remaining)")
+        emg_status = "ACTIVE [EMERGENCY OVERRIDE]" if ambulance.emergency_active else "ARRIVED [RECOVERY]"
+        print(f"   Emergency Run   : {emg_status}")
+        print("-" * 41)
+        
+    print("\n" + "=" * 57)
+    print(f" INTEGRATION SCENARIO COMPLETE: {name}")
+    print("=" * 57)
+
 def main():
     print("=========================================")
     print("     STM32 Modules Unified Test Suite    ")
@@ -609,6 +671,14 @@ def main():
     if failed_tests == 0:
         print("ALL TESTS PASSED")
         print("=========================================")
+        
+        # Run Integration Scenarios if all tests passed
+        scenario1_traffic = [0] * 9
+        run_integration_scenario("SCENARIO 1: Standard/Low Traffic (Start at A)", NODE_A, scenario1_traffic)
+        
+        scenario2_traffic = [0, 35, 48, 0, 15, 0, 0, 0, 0] # A, B=HIGH, C=HIGH, D, E=MED, F, G, H, I
+        run_integration_scenario("SCENARIO 2: Congested Route Bypass (Start at A)", NODE_A, scenario2_traffic)
+        
         return True
     else:
         print(f"{failed_tests} TEST(S) FAILED")
