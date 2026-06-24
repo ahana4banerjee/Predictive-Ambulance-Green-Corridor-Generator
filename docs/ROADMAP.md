@@ -181,9 +181,9 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 2 — Traffic Simulation Testing**
 
-- [ ] Test with known vehicle counts (e.g., A=35, B=12, C=48)
-- [ ] Verify classification output: A=HIGH, B=MEDIUM, C=HIGH
-- [ ] Test edge cases: exactly 10, 11, 25, 26 vehicles
+- [x] Test with known vehicle counts (e.g., A=35, B=12, C=48)
+- [x] Verify classification output: A=HIGH, B=MEDIUM, C=HIGH
+- [x] Test edge cases: exactly 10, 11, 25, 26 vehicles
 
 **Day 3 — Ambulance Tracker**
 
