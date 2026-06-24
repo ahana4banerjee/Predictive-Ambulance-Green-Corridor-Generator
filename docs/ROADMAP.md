@@ -187,10 +187,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 3 — Ambulance Tracker**
 
-- [ ] Create `ambulance_tracker.c`
-- [ ] Implement variables: `current_position`, `destination`, `speed`, `distance_remaining`
-- [ ] Implement junction-to-junction movement logic
-- [ ] Test ambulance moving A → B → C → F → I
+- [x] Create `ambulance_tracker.c`
+- [x] Implement variables: `current_position`, `destination`, `speed`, `distance_remaining`
+- [x] Implement junction-to-junction movement logic
+- [x] Test ambulance moving A → B → C → F → I
 
 **Day 4 — Route Optimizer**
 
