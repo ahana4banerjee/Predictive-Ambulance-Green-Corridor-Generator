@@ -174,10 +174,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 1 — Project Setup and Traffic Monitor**
 
-- [ ] Create STM32CubeIDE project (STM32F103C8 or equivalent)
-- [ ] Create `traffic_monitor.c` and `traffic_monitor.h`
-- [ ] Implement vehicle count simulation for all 9 junctions
-- [ ] Implement density classification: LOW / MEDIUM / HIGH
+- [x] Create STM32CubeIDE project (STM32F103C8 or equivalent)
+- [x] Create `traffic_monitor.c` and `traffic_monitor.h`
+- [x] Implement vehicle count simulation for all 9 junctions
+- [x] Implement density classification: LOW / MEDIUM / HIGH
 
 **Day 2 — Traffic Simulation Testing**
 
