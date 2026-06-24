@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
 run_stm32_tests.py
-Mocks the C logic for the STM32 Traffic Monitor module and runs the test suite
-to verify correctness of the classification algorithm.
+Mocks the C logic for the STM32 Traffic Monitor and Ambulance Tracker modules,
+running the automated test suite to verify correctness of both modules.
 """
 
-# Enum representations
+# ============================================================================
+# ENUMS & CONFIGURATIONS
+# ============================================================================
 DENSITY_LOW = 0
 DENSITY_MEDIUM = 1
 DENSITY_HIGH = 2
@@ -19,7 +21,11 @@ NODE_F = 5
 NODE_G = 6
 NODE_H = 7
 NODE_I = 8
+NODE_NONE = 15
 
+# ============================================================================
+# MODULE 1: TRAFFIC MONITOR MOCK
+# ============================================================================
 class TrafficState:
     def __init__(self):
         self.vehicle_counts = [0] * 9
@@ -63,7 +69,80 @@ def traffic_monitor_print_report(state):
         print(f"    {junction_label}    |      {state.vehicle_counts[i]:3d}      | {density_to_string(state.density_levels[i])}")
     print("=========================================")
 
-# Tests
+# ============================================================================
+# MODULE 2: AMBULANCE TRACKER MOCK
+# ============================================================================
+class AmbulanceState:
+    def __init__(self):
+        self.current_node = NODE_NONE
+        self.destination = NODE_I
+        self.speed = 1.0
+        self.distance_remaining = 0
+        self.emergency_active = False
+
+class RouteDetails:
+    def __init__(self):
+        self.path = [NODE_NONE] * 9
+        self.path_length = 0
+        self.total_cost = 0.0
+
+def ambulance_tracker_init(state, start_node):
+    state.current_node = start_node
+    state.destination = NODE_I
+    state.speed = 1.0
+    state.distance_remaining = 0
+    state.emergency_active = (start_node != NODE_I)
+
+def ambulance_tracker_set_route(state, route):
+    current_index = -1
+    for i in range(route.path_length):
+        if route.path[i] == state.current_node:
+            current_index = i
+            break
+            
+    if current_index != -1:
+        state.distance_remaining = route.path_length - 1 - current_index
+    else:
+        state.distance_remaining = route.path_length - 1 if route.path_length > 0 else 0
+        
+    state.emergency_active = (state.current_node != state.destination)
+
+def ambulance_tracker_move_to_next(state, next_node):
+    if next_node >= NODE_NONE:
+        return
+        
+    if state.current_node == next_node:
+        return
+        
+    state.current_node = next_node
+    
+    if state.distance_remaining > 0:
+        state.distance_remaining -= 1
+        
+    if state.current_node == state.destination:
+        state.emergency_active = False
+        state.distance_remaining = 0
+
+def node_to_char(node):
+    if 0 <= node <= 8:
+        return chr(ord('A') + node)
+    return '?'
+
+def ambulance_tracker_print_status(state):
+    print("=========================================")
+    print("        Ambulance Tracker Status         ")
+    print("=========================================")
+    print(f"Current Position   : {node_to_char(state.current_node)}")
+    print(f"Destination        : {node_to_char(state.destination)}")
+    print(f"Remaining Distance : {state.distance_remaining} segments")
+    print(f"Current Speed      : {state.speed:.2f} units/sec")
+    status_str = "ACTIVE [EMERGENCY]" if state.emergency_active else "INACTIVE [ARRIVED]"
+    print(f"Emergency Status   : {status_str}")
+    print("=========================================")
+
+# ============================================================================
+# RUNNER LOGIC
+# ============================================================================
 failed_tests = 0
 
 def run_test(name, func):
@@ -75,6 +154,7 @@ def run_test(name, func):
         print("FAIL")
         failed_tests += 1
 
+# Traffic Monitor tests
 def test_init():
     state = TrafficState()
     traffic_monitor_init(state)
@@ -128,19 +208,78 @@ def test_boundary_classification():
     if state.density_levels[NODE_B] != DENSITY_MEDIUM: return False
     if state.density_levels[NODE_C] != DENSITY_MEDIUM: return False
     if state.density_levels[NODE_D] != DENSITY_HIGH: return False
+    return True
+
+# Ambulance Tracker tests
+def test_tracker_init():
+    state = AmbulanceState()
+    ambulance_tracker_init(state, NODE_A)
+    if state.current_node != NODE_A: return False
+    if state.destination != NODE_I: return False
+    if state.speed != 1.0: return False
+    if state.emergency_active != True: return False
     
+    ambulance_tracker_init(state, NODE_I)
+    if state.emergency_active != False: return False
+    return True
+
+def test_tracker_movement():
+    state = AmbulanceState()
+    ambulance_tracker_init(state, NODE_A)
+    
+    route = RouteDetails()
+    route.path = [NODE_A, NODE_B, NODE_C, NODE_F, NODE_I]
+    route.path_length = 5
+    route.total_cost = 4.0
+    
+    ambulance_tracker_set_route(state, route)
+    if state.distance_remaining != 4: return False
+    if state.emergency_active != True: return False
+    
+    # Step B
+    ambulance_tracker_move_to_next(state, NODE_B)
+    if state.current_node != NODE_B: return False
+    if state.distance_remaining != 3: return False
+    
+    # Step C
+    ambulance_tracker_move_to_next(state, NODE_C)
+    if state.current_node != NODE_C: return False
+    if state.distance_remaining != 2: return False
+    
+    # Step F
+    ambulance_tracker_move_to_next(state, NODE_F)
+    if state.current_node != NODE_F: return False
+    if state.distance_remaining != 1: return False
+    
+    print()
+    ambulance_tracker_print_status(state)
+    
+    # Step I (Arrive)
+    ambulance_tracker_move_to_next(state, NODE_I)
+    if state.current_node != NODE_I: return False
+    if state.distance_remaining != 0: return False
+    if state.emergency_active != False: return False
+    
+    print()
+    ambulance_tracker_print_status(state)
     return True
 
 def main():
     print("=========================================")
-    print("     Traffic Monitor Unit Test Suite     ")
+    print("     STM32 Modules Unified Test Suite    ")
     print("=========================================")
     
+    print("\n--- 1. Traffic Monitor Module ---")
     run_test("test_init", test_init)
     run_test("test_typical_classification", test_typical_classification)
     run_test("test_boundary_classification", test_boundary_classification)
     
-    print("\nTest Suite Completed: ", end="")
+    print("\n--- 2. Ambulance Tracker Module ---")
+    run_test("test_tracker_init", test_tracker_init)
+    run_test("test_tracker_movement", test_tracker_movement)
+    
+    print("\n=========================================")
+    print("Test Suite Completed: ", end="")
     if failed_tests == 0:
         print("ALL TESTS PASSED")
         print("=========================================")
