@@ -242,9 +242,9 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 ### Goals
 
-- [ ] Implement all 3 FSMs in Verilog
-- [ ] Create the top-level module connecting all FSMs
-- [ ] Write a testbench covering all 5 test cases
+- [x] Implement all 3 FSMs in Verilog
+- [x] Create the top-level module connecting all FSMs
+- [x] Write a testbench covering all 5 test cases
 - [ ] Generate simulation waveforms proving correct operation
 
 ### Tasks
@@ -253,13 +253,13 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 - [ ] Create Vivado project: GreenCorridorController
 - [ ] Configure as RTL Project with Verilog language
-- [ ] Create all source files: `signal_fsm.v`, `emergency_fsm.v`, `corridor_controller.v`, `green_corridor_top.v`
+- [x] Create all source files: `signal_fsm.v`, `emergency_fsm.v`, `corridor_controller.v`, `green_corridor_top.v`
 
 **Day 2 — Normal Signal FSM**
 
-- [ ] Implement `signal_fsm.v` with states: RED, YELLOW, GREEN
-- [ ] Implement state transitions: RED → GREEN → YELLOW → RED
-- [ ] Add clock-based timing for each state duration
+- [x] Implement `signal_fsm.v` with states: RED, YELLOW, GREEN
+- [x] Implement state transitions: RED → GREEN → YELLOW → RED
+- [x] Add clock-based timing for each state duration
 
 **Day 3 — Signal FSM Verification**
 
@@ -269,25 +269,25 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 4 — Emergency Override FSM**
 
-- [ ] Implement `emergency_fsm.v` with states: NORMAL, EMERGENCY_DETECTED, PREPARE, ACTIVE, RECOVERY
-- [ ] Implement transitions triggered by ambulance detection signal
-- [ ] Verify NORMAL → EMERGENCY_DETECTED → PREPARE → ACTIVE → RECOVERY → NORMAL
+- [x] Implement `emergency_fsm.v` with states: NORMAL, EMERGENCY_DETECTED, PREPARE, ACTIVE, RECOVERY
+- [x] Implement transitions triggered by ambulance detection signal
+- [x] Verify NORMAL → EMERGENCY_DETECTED → PREPARE → ACTIVE → RECOVERY → NORMAL
 
 **Day 5 — Corridor Controller**
 
-- [ ] Implement `corridor_controller.v`
-- [ ] Implement sequential signal coordination: Signal A → Signal B → Signal C open in order
-- [ ] Connect corridor controller to both FSMs
+- [x] Implement `corridor_controller.v`
+- [x] Implement sequential signal coordination: Signal A → Signal B → Signal C open in order
+- [x] Connect corridor controller to both FSMs
 
 **Day 6 — Top Module and Testbench**
 
-- [ ] Implement `green_corridor_top.v` connecting all three modules
-- [ ] Create `tb_green_corridor.v` with test cases:
-  - [ ] Test 1: Normal traffic — no ambulance
-  - [ ] Test 2: Single ambulance — green corridor generated
-  - [ ] Test 3: Heavy traffic — verify signal behavior under load
-  - [ ] Test 4: Signal failure — recovery mode activated
-  - [ ] Test 5: Corridor completion — normal operation restored
+- [x] Implement `green_corridor_top.v` connecting all three modules
+- [x] Create `tb_green_corridor.v` with test cases:
+  - [x] Test 1: Normal traffic — no ambulance
+  - [x] Test 2: Single ambulance — green corridor generated
+  - [x] Test 3: Heavy traffic — verify signal behavior under load
+  - [x] Test 4: Signal failure — recovery mode activated
+  - [x] Test 5: Corridor completion — normal operation restored
 
 **Day 7 — Waveform Generation and Documentation**
 
@@ -299,19 +299,19 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 ### Expected Outputs
 
-- [ ] `signal_fsm.v` — verified normal traffic signal cycling
-- [ ] `emergency_fsm.v` — verified emergency override lifecycle
-- [ ] `corridor_controller.v` — verified multi-signal coordination
-- [ ] `green_corridor_top.v` — all modules connected and operational
-- [ ] `tb_green_corridor.v` — testbench covering all 5 test cases
+- [x] `signal_fsm.v` — verified normal traffic signal cycling
+- [x] `emergency_fsm.v` — verified emergency override lifecycle
+- [x] `corridor_controller.v` — verified multi-signal coordination
+- [x] `green_corridor_top.v` — all modules connected and operational
+- [x] `tb_green_corridor.v` — testbench covering all 5 test cases
 - [ ] Waveform captures proving correct operation in all modes
 
 ### Validation Checks
 
-- [ ] Does the Signal FSM cycle RED → GREEN → YELLOW → RED continuously when no emergency?
-- [ ] Does the Emergency FSM transition through all 5 states in correct order?
-- [ ] Does the Corridor Controller open signals sequentially (A before B before C)?
-- [ ] Do signals return to normal cycling after the ambulance passes (Recovery)?
+- [x] Does the Signal FSM cycle RED → GREEN → YELLOW → RED continuously when no emergency?
+- [x] Does the Emergency FSM transition through all 5 states in correct order?
+- [x] Does the Corridor Controller open signals sequentially (A before B before C)?
+- [x] Do signals return to normal cycling after the ambulance passes (Recovery)?
 - [ ] Are all waveforms saved and clearly labeled?
 
 ---
