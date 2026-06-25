@@ -1,0 +1,70 @@
+==================================================================================
+             Top-Level Green Corridor Waveform Verification Report                
+==================================================================================
+
+Active Transitions Log:
+---------------------------------------------------------------------------------------------------------
+Time (ns)  | TRIG | NODE | ETA   | SIG A (Mode)     | SIG B (Mode)     | SIG C (Mode)     | EMG_ACT
+---------------------------------------------------------------------------------------------------------
+0          | 0    | -    | 0     | UNK   (UNKNOWN ) | UNK   (UNKNOWN ) | UNK   (UNKNOWN ) | x      
+5          | 0    | -    | 0     | RED   (NORMAL  ) | RED   (NORMAL  ) | RED   (NORMAL  ) | 0      
+315        | 0    | -    | 0     | GRN   (NORMAL  ) | GRN   (NORMAL  ) | GRN   (NORMAL  ) | 0      
+565        | 0    | -    | 0     | YEL   (NORMAL  ) | YEL   (NORMAL  ) | YEL   (NORMAL  ) | 0      
+615        | 0    | -    | 0     | RED   (NORMAL  ) | RED   (NORMAL  ) | RED   (NORMAL  ) | 0      
+820        | 1    | A    | 240   | RED   (NORMAL  ) | RED   (NORMAL  ) | RED   (NORMAL  ) | 0      
+825        | 1    | A    | 240   | RED   (DETECTED) | RED   (DETECTED) | RED   (DETECTED) | 1      
+835        | 1    | A    | 240   | RED   (ACTIVE  ) | RED   (PREPARE ) | RED   (DETECTED) | 1      
+845        | 1    | A    | 240   | GRN   (ACTIVE  ) | GRN   (PREPARE ) | RED   (DETECTED) | 1      
+915        | 1    | A    | 240   | GRN   (ACTIVE  ) | GRN   (PREPARE ) | GRN   (DETECTED) | 1      
+1120       | 1    | B    | 180   | GRN   (ACTIVE  ) | GRN   (PREPARE ) | GRN   (DETECTED) | 1      
+1135       | 1    | B    | 180   | GRN   (RECOVERY) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+1245       | 1    | B    | 180   | GRN   (NORMAL  ) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+1255       | 1    | B    | 180   | GRN   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+1385       | 1    | B    | 180   | YEL   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+1420       | 1    | C    | 120   | YEL   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+1435       | 1    | C    | 120   | RED   (DETECTED) | GRN   (RECOVERY) | GRN   (ACTIVE  ) | 1      
+1545       | 1    | C    | 120   | RED   (DETECTED) | GRN   (NORMAL  ) | GRN   (ACTIVE  ) | 1      
+1555       | 1    | C    | 120   | RED   (DETECTED) | GRN   (DETECTED) | GRN   (ACTIVE  ) | 1      
+1685       | 1    | C    | 120   | RED   (DETECTED) | YEL   (DETECTED) | GRN   (ACTIVE  ) | 1      
+1720       | 1    | I    | 0     | RED   (DETECTED) | YEL   (DETECTED) | GRN   (ACTIVE  ) | 1      
+1735       | 1    | I    | 0     | GRN   (DETECTED) | RED   (DETECTED) | GRN   (RECOVERY) | 1      
+1820       | 0    | I    | 0     | GRN   (DETECTED) | RED   (DETECTED) | GRN   (RECOVERY) | 1      
+1825       | 0    | I    | 0     | GRN   (NORMAL  ) | RED   (NORMAL  ) | GRN   (RECOVERY) | 0      
+1845       | 0    | I    | 0     | GRN   (NORMAL  ) | RED   (NORMAL  ) | GRN   (NORMAL  ) | 0      
+1985       | 0    | I    | 0     | YEL   (NORMAL  ) | RED   (NORMAL  ) | YEL   (NORMAL  ) | 0      
+2035       | 0    | I    | 0     | RED   (NORMAL  ) | GRN   (NORMAL  ) | RED   (NORMAL  ) | 0      
+2120       | 1    | A    | 0     | RED   (NORMAL  ) | GRN   (NORMAL  ) | RED   (NORMAL  ) | 0      
+2125       | 1    | A    | 0     | RED   (DETECTED) | GRN   (DETECTED) | RED   (DETECTED) | 1      
+2135       | 1    | A    | 0     | RED   (ACTIVE  ) | GRN   (PREPARE ) | RED   (DETECTED) | 1      
+2145       | 1    | A    | 0     | GRN   (ACTIVE  ) | GRN   (PREPARE ) | RED   (DETECTED) | 1      
+2320       | 1    | B    | 0     | GRN   (ACTIVE  ) | GRN   (PREPARE ) | RED   (DETECTED) | 1      
+2335       | 1    | B    | 0     | GRN   (RECOVERY) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+2445       | 1    | B    | 0     | GRN   (NORMAL  ) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+2455       | 1    | B    | 0     | GRN   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+2585       | 1    | B    | 0     | YEL   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+2635       | 1    | B    | 0     | RED   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+2920       | 1    | C    | 0     | RED   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+2935       | 1    | C    | 0     | GRN   (DETECTED) | GRN   (RECOVERY) | GRN   (ACTIVE  ) | 1      
+3045       | 1    | C    | 0     | GRN   (DETECTED) | GRN   (NORMAL  ) | GRN   (ACTIVE  ) | 1      
+3055       | 1    | C    | 0     | GRN   (DETECTED) | GRN   (DETECTED) | GRN   (ACTIVE  ) | 1      
+3120       | 0    | I    | 0     | GRN   (DETECTED) | GRN   (DETECTED) | GRN   (ACTIVE  ) | 1      
+3125       | 0    | I    | 0     | GRN   (NORMAL  ) | GRN   (NORMAL  ) | GRN   (NORMAL  ) | 0      
+3185       | 0    | I    | 0     | YEL   (NORMAL  ) | YEL   (NORMAL  ) | GRN   (NORMAL  ) | 0      
+3235       | 0    | I    | 0     | RED   (NORMAL  ) | RED   (NORMAL  ) | GRN   (NORMAL  ) | 0      
+3375       | 0    | I    | 0     | RED   (NORMAL  ) | RED   (NORMAL  ) | YEL   (NORMAL  ) | 0      
+3420       | 1    | B    | 0     | RED   (NORMAL  ) | RED   (NORMAL  ) | YEL   (NORMAL  ) | 0      
+3425       | 1    | B    | 0     | RED   (DETECTED) | RED   (DETECTED) | RED   (DETECTED) | 1      
+3435       | 1    | B    | 0     | RED   (DETECTED) | RED   (ACTIVE  ) | RED   (PREPARE ) | 1      
+3445       | 1    | B    | 0     | RED   (DETECTED) | GRN   (ACTIVE  ) | GRN   (PREPARE ) | 1      
+3525       | 1    | B    | 0     | RED   (NORMAL  ) | RED   (NORMAL  ) | RED   (NORMAL  ) | 0      
+3550       | 0    | -    | 0     | RED   (NORMAL  ) | RED   (NORMAL  ) | RED   (NORMAL  ) | 0      
+3845       | 0    | -    | 0     | GRN   (NORMAL  ) | GRN   (NORMAL  ) | GRN   (NORMAL  ) | 0      
+---------------------------------------------------------------------------------------------------------
+
+Visual Green Wave Timeline (█ = Green, _ = Red/Yellow):
+Ambulance:                                          AAAAAAAAAAAAAAABBBBBBBBBBBBBBBCCCCCCCCCCCCCCCIIIII               AAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCC               BBBBBBB                
+Signal A:  ________________█████████████______________███████████████████████████_________________█████████████________██████████████████████_________________█████████████_________________________________█
+Signal B:  ________________█████████████______________██████████████████████████████████████████_________________██████████████████████████████████████████████████████████_____________████________________█
+Signal C:  ________________█████████████_________________██████████████████████████████████████████████████████_________________████████████████████████████████████████████████████____████________________█
+Time (ns): 00000111112222233333444445555566666777778888899999000001111122222333334444455555666667777788888999990000011111222223333344444555556666677777888889999900000111112222233333444445555566666777778888
+           (Each column represents 20ns. Check that Signal opens sequentially A -> B -> C)

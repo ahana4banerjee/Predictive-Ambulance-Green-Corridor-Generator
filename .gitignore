@@ -45,4 +45,6 @@ Desktop.ini
 *.db
 *.wdb
 xsim.ini
-vivado/green_corridor.prj
+*.prj
+*.vcd
+dfx_runtime.txt

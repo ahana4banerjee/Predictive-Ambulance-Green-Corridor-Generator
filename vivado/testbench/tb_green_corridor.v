@@ -77,6 +77,10 @@ module tb_green_corridor;
 
     // Stimulus process
     initial begin
+        // Setup waveform dumping
+        $dumpfile("tb_green_corridor.vcd");
+        $dumpvars(0, tb_green_corridor);
+
         // Initialize Inputs
         clk = 0;
         rst = 1;
@@ -175,6 +179,7 @@ module tb_green_corridor;
         $display("\n=========================================================");
         $display("         GREEN CORRIDOR RTL SIMULATION COMPLETE          ");
         $display("=========================================================\n");
+        $finish;
     end
 
 endmodule
