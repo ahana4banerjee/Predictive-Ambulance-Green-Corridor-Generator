@@ -245,14 +245,14 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 - [x] Implement all 3 FSMs in Verilog
 - [x] Create the top-level module connecting all FSMs
 - [x] Write a testbench covering all 5 test cases
-- [ ] Generate simulation waveforms proving correct operation
+- [x] Generate simulation waveforms proving correct operation
 
 ### Tasks
 
 **Day 1 — Vivado Project Setup**
 
-- [ ] Create Vivado project: GreenCorridorController
-- [ ] Configure as RTL Project with Verilog language
+- [x] Create Vivado project: GreenCorridorController
+- [x] Configure as RTL Project with Verilog language
 - [x] Create all source files: `signal_fsm.v`, `emergency_fsm.v`, `corridor_controller.v`, `green_corridor_top.v`
 
 **Day 2 — Normal Signal FSM**
@@ -263,9 +263,9 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 3 — Signal FSM Verification**
 
-- [ ] Simulate `signal_fsm.v` independently
-- [ ] Verify waveform shows correct state sequence: RED → GREEN → YELLOW → RED
-- [ ] Verify timing is consistent across multiple cycles
+- [x] Simulate `signal_fsm.v` independently
+- [x] Verify waveform shows correct state sequence: RED → GREEN → YELLOW → RED
+- [x] Verify timing is consistent across multiple cycles
 
 **Day 4 — Emergency Override FSM**
 
@@ -291,11 +291,11 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 7 — Waveform Generation and Documentation**
 
-- [ ] Run full simulation
-- [ ] Capture waveform screenshots showing normal operation
-- [ ] Capture waveform screenshots showing emergency override
-- [ ] Capture waveform screenshots showing corridor generation and recovery
-- [ ] Save all waveforms to `vivado/waveforms/`
+- [x] Run full simulation
+- [x] Capture waveform screenshots showing normal operation
+- [x] Capture waveform screenshots showing emergency override
+- [x] Capture waveform screenshots showing corridor generation and recovery
+- [x] Save all waveforms to `vivado/waveforms/`
 
 ### Expected Outputs
 
@@ -304,7 +304,7 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 - [x] `corridor_controller.v` — verified multi-signal coordination
 - [x] `green_corridor_top.v` — all modules connected and operational
 - [x] `tb_green_corridor.v` — testbench covering all 5 test cases
-- [ ] Waveform captures proving correct operation in all modes
+- [x] Waveform captures proving correct operation in all modes
 
 ### Validation Checks
 
@@ -312,7 +312,7 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 - [x] Does the Emergency FSM transition through all 5 states in correct order?
 - [x] Does the Corridor Controller open signals sequentially (A before B before C)?
 - [x] Do signals return to normal cycling after the ambulance passes (Recovery)?
-- [ ] Are all waveforms saved and clearly labeled?
+- [x] Are all waveforms saved and clearly labeled?
 
 ---
 

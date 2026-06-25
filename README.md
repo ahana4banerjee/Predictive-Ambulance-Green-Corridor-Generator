@@ -225,7 +225,7 @@ Predictive-Ambulance-Green-Corridor-Generator/
 |---|---|---|---|
 | **Week 1** | 📐 Project Foundation | Complete design documentation, city network finalized, tools installed | ✅ |
 | **Week 2** | 🧠 STM32 Intelligence | Console output: traffic status, selected route, ETA, ambulance position | ✅ |
-| **Week 3** | ⚡ Vivado Signal Control | Waveforms: normal operation, emergency override, corridor generation | ☐ |
+| **Week 3** | ⚡ Vivado Signal Control | Waveforms: normal operation, emergency override, corridor generation | ✅ |
 | **Week 4** | 💡 Tinkercad Simulation | Working visual demo: LEDs change on ambulance button press | ☐ |
 | **Week 5** | 📊 Integration & Analytics | Dashboard: time saved, efficiency, comparison graphs | ☐ |
 | **Week 6** | ✨ Final Polish | Screenshots, report, presentation, complete demo | ☐ |
@@ -363,6 +363,19 @@ flowchart LR
 | **ETA Calculator** | [eta_calculator.c](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/ETACalculator/eta_calculator.c) | Sums travel time based on traffic density and predicts per-junction crossings |
 | **C Unit Tests** | [tests/](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/tests/) | Automated unit tests covering boundaries, routing, ETA math, and integration |
 | **Python Test Suite** | [run_stm32_tests.py](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/stm32/tests/run_stm32_tests.py) | Executable script modeling and validating the entire STM32 module suite |
+
+### ⚡ Vivado Signal Control Modules (Week 3)
+
+| File / Module | Location / Path | Description |
+|---|---|---|
+| **Signal FSM** | [signal_fsm.v](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/rtl/signal_fsm.v) | Traffic light controller for a single junction (RED ➔ GREEN ➔ YELLOW) |
+| **Emergency FSM** | [emergency_fsm.v](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/rtl/emergency_fsm.v) | Overrides normal cycle, coordinating pre-emption state transitions |
+| **Corridor Controller** | [corridor_controller.v](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/rtl/corridor_controller.v) | Sequential coordinator decoding paths and generating green wave shifts |
+| **Top Integration** | [green_corridor_top.v](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/rtl/green_corridor_top.v) | Direct structural binding linking controllers with intersection FSMs |
+| **Independent Testbench** | [tb_signal_fsm.v](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/testbench/tb_signal_fsm.v) | FSM test suite verifying autonomous cycle and overrides independently |
+| **System Testbench** | [tb_green_corridor.v](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/testbench/tb_green_corridor.v) | Runs the 5 validation tests: normal cycling, green wave, recovery, reset |
+| **Simulation Runner** | [run_vivado_sim.py](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/run_vivado_sim.py) | CLI utility configuring compilation snapshots and executing xelab/xsim |
+| **ASCII Waveform Report** | [generate_ascii_wave.py](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/waveforms/generate_ascii_wave.py) | High-performance VCD database parser generating readable text timing diagrams |
 
 ---
 
