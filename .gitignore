@@ -30,3 +30,19 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+
+# Xilinx Vivado Project & Simulation Artifacts
+**/Green_Corridor_Controller.cache/
+**/Green_Corridor_Controller.hw/
+**/Green_Corridor_Controller.ip_user_files/
+**/Green_Corridor_Controller.sim/
+**/.Xil/
+**/xsim.dir/
+*.jou
+*.log
+*.pb
+*.str
+*.db
+*.wdb
+xsim.ini
+vivado/green_corridor.prj
