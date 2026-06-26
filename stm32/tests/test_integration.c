@@ -18,6 +18,168 @@ static char node_to_char(NodeId node) {
     return '?';
 }
 
+const char* get_normal_signal_state_c(uint32_t time_sec, NodeId node_id) {
+    uint32_t offset = 0;
+    switch (node_id) {
+        case NODE_A: offset = 0; break;
+        case NODE_B: offset = 10; break;
+        case NODE_C: offset = 20; break;
+        case NODE_D: offset = 30; break;
+        case NODE_E: offset = 40; break;
+        case NODE_F: offset = 50; break;
+        case NODE_G: offset = 0; break;
+        case NODE_H: offset = 15; break;
+        case NODE_I: offset = 30; break;
+        default: offset = 0; break;
+    }
+    uint32_t phase_time = (time_sec + offset) % 60;
+    if (phase_time < 30) {
+        return "RED";
+    } else if (phase_time < 55) {
+        return "GREEN";
+    } else {
+        return "YELLOW";
+    }
+}
+
+uint32_t get_segment_base_time_c(uint8_t count) {
+    if (count <= 10) {
+        return 60;
+    } else if (count <= 25) {
+        return 90;
+    } else {
+        return 150;
+    }
+}
+
+void SimulateAndLogCSV_C(const uint8_t vehicle_counts[9], NodeId start_node, bool is_corridor, const char* filepath) {
+    TrafficState traffic;
+    TrafficMonitor_Init(&traffic);
+    for (int i = 0; i < 9; i++) {
+        TrafficMonitor_SetVehicleCount(&traffic, (NodeId)i, vehicle_counts[i]);
+    }
+    TrafficMonitor_UpdateDensity(&traffic);
+    
+    RouteDetails route;
+    RouteOptimizer_FindPath(&traffic, start_node, &route);
+    
+    if (route.path_length == 0) {
+        printf("ERROR: C CSV Logger - No route found!\n");
+        return;
+    }
+    
+    AmbulanceState ambulance;
+    AmbulanceTracker_Init(&ambulance, start_node);
+    AmbulanceTracker_SetRoute(&ambulance, &route);
+    
+    FILE* file = fopen(filepath, "w");
+    if (!file) {
+        printf("ERROR: C CSV Logger - Cannot open file %s for writing!\n", filepath);
+        return;
+    }
+    
+    fprintf(file, "timestamp,junction,signal_state,ambulance_position,traffic_density\n");
+    
+    uint32_t current_time = 0;
+    
+    for (int i = 0; i < route.path_length; i++) {
+        NodeId node = route.path[i];
+        
+        if (i > 0) {
+            NodeId prev_node = route.path[i-1];
+            uint32_t base_travel_time = get_segment_base_time_c(traffic.vehicle_counts[node]);
+            
+            uint32_t wait_time = 0;
+            if (!is_corridor) {
+                uint32_t arrival_time_estimate = current_time + base_travel_time;
+                uint32_t offset = 0;
+                switch (node) {
+                    case NODE_A: offset = 0; break;
+                    case NODE_B: offset = 10; break;
+                    case NODE_C: offset = 20; break;
+                    case NODE_D: offset = 30; break;
+                    case NODE_E: offset = 40; break;
+                    case NODE_F: offset = 50; break;
+                    case NODE_G: offset = 0; break;
+                    case NODE_H: offset = 15; break;
+                    case NODE_I: offset = 30; break;
+                    default: offset = 0; break;
+                }
+                uint32_t phase_time = (arrival_time_estimate + offset) % 60;
+                
+                if (phase_time < 30) {
+                    wait_time = 30 - phase_time;
+                } else if (phase_time >= 55) {
+                    wait_time = (60 - phase_time) + 30;
+                }
+            }
+            
+            uint32_t travel_duration = base_travel_time + wait_time;
+            for (uint32_t t_offset = 0; t_offset < travel_duration; t_offset += 10) {
+                uint32_t t_sampled = current_time + t_offset;
+                char pos_char = node_to_char(prev_node);
+                
+                for (int j = 0; j < 9; j++) {
+                    char junction_char = node_to_char((NodeId)j);
+                    const char* sig_state = "GREEN";
+                    if (is_corridor) {
+                        if (j == prev_node) {
+                            sig_state = "GREEN";
+                        } else if (j == node) {
+                            sig_state = "RED";
+                        } else {
+                            sig_state = get_normal_signal_state_c(t_sampled, (NodeId)j);
+                        }
+                    } else {
+                        sig_state = get_normal_signal_state_c(t_sampled, (NodeId)j);
+                    }
+                    
+                    const char* density_str = (traffic.density_levels[j] == DENSITY_LOW) ? "LOW" :
+                                               (traffic.density_levels[j] == DENSITY_MEDIUM) ? "MEDIUM" : "HIGH";
+                    fprintf(file, "%u,%c,%s,%c,%s\n", t_sampled, junction_char, sig_state, pos_char, density_str);
+                }
+            }
+            current_time += travel_duration;
+            AmbulanceTracker_MoveToNext(&ambulance, node);
+        }
+        
+        for (int j = 0; j < 9; j++) {
+            char junction_char = node_to_char((NodeId)j);
+            const char* sig_state = "GREEN";
+            if (is_corridor) {
+                if (j == node) {
+                    sig_state = "GREEN";
+                } else if (i < route.path_length - 1 && j == route.path[i+1]) {
+                    sig_state = "RED";
+                } else {
+                    sig_state = get_normal_signal_state_c(current_time, (NodeId)j);
+                }
+            } else {
+                sig_state = get_normal_signal_state_c(current_time, (NodeId)j);
+            }
+            
+            const char* density_str = (traffic.density_levels[j] == DENSITY_LOW) ? "LOW" :
+                                       (traffic.density_levels[j] == DENSITY_MEDIUM) ? "MEDIUM" : "HIGH";
+            fprintf(file, "%u,%c,%s,%c,%s\n", current_time, junction_char, sig_state, node_to_char(node), density_str);
+        }
+    }
+    
+    // Post-arrival logs
+    for (uint32_t t_offset = 10; t_offset < 40; t_offset += 10) {
+        uint32_t t_sampled = current_time + t_offset;
+        for (int j = 0; j < 9; j++) {
+            char junction_char = node_to_char((NodeId)j);
+            const char* sig_state = get_normal_signal_state_c(t_sampled, (NodeId)j);
+            const char* density_str = (traffic.density_levels[j] == DENSITY_LOW) ? "LOW" :
+                                       (traffic.density_levels[j] == DENSITY_MEDIUM) ? "MEDIUM" : "HIGH";
+            fprintf(file, "%u,%c,%s,%c,%s\n", t_sampled, junction_char, sig_state, node_to_char(NODE_I), density_str);
+        }
+    }
+    
+    fclose(file);
+    printf("Successfully generated CSV log (C): %s (Duration: %us)\n", filepath, current_time);
+}
+
 void RunIntegrationScenario(const char* name, NodeId start_node, const uint8_t vehicle_counts[9]) {
     printf("\n=========================================================\n");
     printf(" RUNNING INTEGRATION SCENARIO: %s\n", name);
@@ -119,6 +281,13 @@ int main(void) {
         0, 0, 0    // G, H, I
     };
     RunIntegrationScenario("SCENARIO 2: Congested Route Bypass (Start at A)", NODE_A, scenario2_traffic);
+    
+    // Generate CSV output logs
+    printf("\n--- GENERATING CSV LOGS FOR WEEK 5 DAY 1 ---\n");
+    SimulateAndLogCSV_C(scenario1_traffic, NODE_A, true, "dashboard/data/run_corridor_c.csv");
+    SimulateAndLogCSV_C(scenario1_traffic, NODE_A, false, "dashboard/data/run_normal_c.csv");
+    SimulateAndLogCSV_C(scenario2_traffic, NODE_A, true, "dashboard/data/run_corridor_bypass_c.csv");
+    SimulateAndLogCSV_C(scenario2_traffic, NODE_A, false, "dashboard/data/run_normal_bypass_c.csv");
     
     return 0;
 }
