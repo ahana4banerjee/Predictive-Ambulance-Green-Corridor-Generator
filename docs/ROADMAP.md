@@ -414,9 +414,9 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 2 — Statistics Generation**
 
-- [ ] Parse CSV logs
-- [ ] Calculate total travel time (normal mode vs. corridor mode)
-- [ ] Calculate number of red-light stops avoided
+- [x] Parse CSV logs
+- [x] Calculate total travel time (normal mode vs. corridor mode)
+- [x] Calculate number of red-light stops avoided
 
 **Day 3 — Performance Metrics**
 

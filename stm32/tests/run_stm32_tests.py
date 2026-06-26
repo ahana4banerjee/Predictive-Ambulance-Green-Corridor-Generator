@@ -707,7 +707,8 @@ def simulate_and_log_csv(vehicle_counts, start_node, is_corridor, output_filepat
             # Log periodic steps of 10 seconds during transit
             for t_offset in range(0, travel_duration, 10):
                 t_sampled = current_time + t_offset
-                pos_char = node_to_char(prev_node)
+                # Position is prev_node during transit, but shifts to node if we are waiting at its light
+                pos_char = node_to_char(node) if t_offset >= base_travel_time else node_to_char(prev_node)
                 for j in range(9):
                     junction_char = node_to_char(j)
                     sig_state = "GREEN"

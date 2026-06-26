@@ -117,7 +117,7 @@ void SimulateAndLogCSV_C(const uint8_t vehicle_counts[9], NodeId start_node, boo
             uint32_t travel_duration = base_travel_time + wait_time;
             for (uint32_t t_offset = 0; t_offset < travel_duration; t_offset += 10) {
                 uint32_t t_sampled = current_time + t_offset;
-                char pos_char = node_to_char(prev_node);
+                char pos_char = (t_offset >= base_travel_time) ? node_to_char(node) : node_to_char(prev_node);
                 
                 for (int j = 0; j < 9; j++) {
                     char junction_char = node_to_char((NodeId)j);
