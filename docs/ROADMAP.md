@@ -322,74 +322,74 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 ### Goals
 
-- [ ] Build a working traffic signal circuit for 3 intersections
-- [ ] Implement ambulance detection via push button
-- [ ] Display ETA, corridor status, and signal states on LCD
-- [ ] Demonstrate complete green corridor activation visually
+- [x] Build a working traffic signal circuit for 3 intersections
+- [x] Implement ambulance detection via push button
+- [x] Display ETA, corridor status, and signal states on LCD
+- [x] Demonstrate complete green corridor activation visually
 
 ### Tasks
 
 **Day 1 — Traffic Signal Circuit**
 
-- [ ] Place Arduino UNO on Tinkercad workspace
-- [ ] Add 9 LEDs (3 per intersection × 3 intersections)
-- [ ] Wire LEDs to Arduino digital pins
-- [ ] Add current-limiting resistors
+- [x] Place Arduino UNO on Tinkercad workspace
+- [x] Add 9 LEDs (3 per intersection × 3 intersections)
+- [x] Wire LEDs to Arduino digital pins
+- [x] Add current-limiting resistors
 
 **Day 2 — Signal Mapping**
 
-- [ ] Map Intersection A: Red LED, Yellow LED, Green LED
-- [ ] Map Intersection B: Red LED, Yellow LED, Green LED
-- [ ] Map Intersection C: Red LED, Yellow LED, Green LED
-- [ ] Verify all LEDs light correctly when pins are set HIGH
+- [x] Map Intersection A: Red LED, Yellow LED, Green LED
+- [x] Map Intersection B: Red LED, Yellow LED, Green LED
+- [x] Map Intersection C: Red LED, Yellow LED, Green LED
+- [x] Verify all LEDs light correctly when pins are set HIGH
 
 **Day 3 — Vehicle Density Buttons**
 
-- [ ] Add 3 push buttons (one per intersection) for vehicle count simulation
-- [ ] Wire buttons to Arduino input pins with pull-down resistors
-- [ ] Program button press counting logic
+- [x] Add 3 push buttons (one per intersection) for vehicle count simulation
+- [x] Wire buttons to Arduino input pins with pull-down resistors
+- [x] Program button press counting logic
 
 **Day 4 — Ambulance Trigger**
 
-- [ ] Add 1 dedicated push button for ambulance activation
-- [ ] Wire to Arduino input pin
-- [ ] Program emergency mode activation on button press
+- [x] Add 1 dedicated push button for ambulance activation
+- [x] Wire to Arduino input pin
+- [x] Program emergency mode activation on button press
 
 **Day 5 — Arduino Programming**
 
-- [ ] Implement normal signal cycling: RED → GREEN → YELLOW → RED for all 3 intersections
-- [ ] Implement emergency override: all corridor signals switch to GREEN on ambulance trigger
-- [ ] Implement recovery: signals return to normal after ambulance passes
+- [x] Implement normal signal cycling: RED → GREEN → YELLOW → RED for all 3 intersections
+- [x] Implement emergency override: all corridor signals switch to GREEN on ambulance trigger
+- [x] Implement recovery: signals return to normal after ambulance passes
 
 **Day 6 — LCD Integration**
 
-- [ ] Connect 16×2 LCD display to Arduino
-- [ ] Display ETA value
-- [ ] Display corridor status (ACTIVE / INACTIVE)
-- [ ] Display current signal states
+- [x] Connect 16×2 LCD display to Arduino
+- [x] Display ETA value
+- [x] Display corridor status (ACTIVE / INACTIVE)
+- [x] Display current signal states
 
 **Day 7 — Complete Simulation Test**
 
-- [ ] Test normal operation: all signals cycle correctly
-- [ ] Test ambulance trigger: corridor activates, LEDs change
-- [ ] Test recovery: signals return to normal
-- [ ] Take screenshots of each state for documentation
+- [x] Test normal operation: all signals cycle correctly
+- [x] Test ambulance trigger: corridor activates, LEDs change
+- [x] Test recovery: signals return to normal
+- [x] Take screenshots of each state for documentation
 
 ### Expected Outputs
 
-- [ ] Working Tinkercad circuit with 9 LEDs, 4 buttons, 1 LCD, 1 Arduino UNO
-- [ ] Normal signal cycling demonstration
-- [ ] Ambulance trigger → green corridor activation demonstration
-- [ ] LCD displaying ETA, corridor status, and signal states
-- [ ] Screenshots saved to `tinkercad/screenshots/`
+- [x] Working Tinkercad circuit with 9 LEDs, 4 buttons, 1 LCD, 1 Arduino UNO
+- [x] Normal signal cycling demonstration
+- [x] Ambulance trigger → green corridor activation demonstration
+- [x] LCD displaying ETA, corridor status, and signal states
+- [x] Screenshots saved to `tinkercad/screenshots/`
 
 ### Validation Checks
 
-- [ ] Do all 3 intersections cycle RED → GREEN → YELLOW → RED during normal mode?
-- [ ] Does pressing the ambulance button immediately trigger corridor mode?
-- [ ] Do corridor signals turn GREEN in the correct order (A → B → C)?
-- [ ] Does the LCD display update correctly during each phase?
-- [ ] Do signals recover to normal cycling after the corridor deactivates?
+- [x] Do all 3 intersections cycle RED → GREEN → YELLOW → RED during normal mode?
+- [x] Does pressing the ambulance button immediately trigger corridor mode?
+- [x] Do corridor signals turn GREEN in the correct order (A → B → C)?
+- [x] Does the LCD display update correctly during each phase?
+- [x] Do signals recover to normal cycling after the corridor deactivates?
 
 ---
 

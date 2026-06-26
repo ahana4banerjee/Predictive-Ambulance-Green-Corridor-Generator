@@ -226,7 +226,7 @@ Predictive-Ambulance-Green-Corridor-Generator/
 | **Week 1** | 📐 Project Foundation | Complete design documentation, city network finalized, tools installed | ✅ |
 | **Week 2** | 🧠 STM32 Intelligence | Console output: traffic status, selected route, ETA, ambulance position | ✅ |
 | **Week 3** | ⚡ Vivado Signal Control | Waveforms: normal operation, emergency override, corridor generation | ✅ |
-| **Week 4** | 💡 Tinkercad Simulation | Working visual demo: LEDs change on ambulance button press | ☐ |
+| **Week 4** | 💡 Tinkercad Simulation | Working visual demo: LEDs change on ambulance button press | ✅ |
 | **Week 5** | 📊 Integration & Analytics | Dashboard: time saved, efficiency, comparison graphs | ☐ |
 | **Week 6** | ✨ Final Polish | Screenshots, report, presentation, complete demo | ☐ |
 
@@ -376,6 +376,13 @@ flowchart LR
 | **System Testbench** | [tb_green_corridor.v](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/testbench/tb_green_corridor.v) | Runs the 5 validation tests: normal cycling, green wave, recovery, reset |
 | **Simulation Runner** | [run_vivado_sim.py](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/run_vivado_sim.py) | CLI utility configuring compilation snapshots and executing xelab/xsim |
 | **ASCII Waveform Report** | [generate_ascii_wave.py](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/vivado/waveforms/generate_ascii_wave.py) | High-performance VCD database parser generating readable text timing diagrams |
+
+### 💡 Tinkercad Smart City Simulation (Week 4)
+
+| File / Module | Location / Path | Description |
+|---|---|---|
+| **Arduino Sketch** | [smart_city_traffic_controller.ino](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/tinkercad/arduino_code/smart_city_traffic_controller.ino) | C++ source code executing density sensing, LCD reporting, and corridor wave overrides |
+| **Design Specs** | [TINKERCAD_DESIGN.md](file:///d:/Projects/Personal/Predictive-Ambulance-Green-Corridor-Generator/TINKERCAD_DESIGN.md) | Full wiring schematics, pin maps, breadboard suggestions, and validation test guides |
 
 ---
 
