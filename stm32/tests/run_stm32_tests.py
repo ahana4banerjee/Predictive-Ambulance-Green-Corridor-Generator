@@ -5,6 +5,9 @@ Mocks the C logic for all 4 STM32 modules: Traffic Monitor, Ambulance Tracker,
 Route Optimizer, and ETA Calculator, verifying correctness through an automated test suite.
 """
 
+import os
+import csv
+
 # ============================================================================
 # ENUMS & CONFIGURATIONS
 # ============================================================================
@@ -643,6 +646,121 @@ def run_integration_scenario(name, start_node, vehicle_counts):
     print(f" INTEGRATION SCENARIO COMPLETE: {name}")
     print("=" * 57)
 
+def get_normal_signal_state(time_sec, node_id, offset_map):
+    offset = offset_map.get(node_id, 0)
+    phase_time = (time_sec + offset) % 60
+    if phase_time < 30:
+        return "RED"
+    elif phase_time < 55:
+        return "GREEN"
+    else:
+        return "YELLOW"
+
+def simulate_and_log_csv(vehicle_counts, start_node, is_corridor, output_filepath):
+    # Initialize components
+    traffic = TrafficState()
+    traffic_monitor_init(traffic)
+    for i in range(9):
+        traffic_monitor_set_vehicle_count(traffic, i, vehicle_counts[i])
+    traffic_monitor_update_density(traffic)
+    
+    route = RouteDetails()
+    route_optimizer_find_path(traffic, start_node, route)
+    
+    if route.path_length == 0:
+        print(f"ERROR: Cannot generate CSV log, route length is 0")
+        return
+        
+    ambulance = AmbulanceState()
+    ambulance_tracker_init(ambulance, start_node)
+    ambulance_tracker_set_route(ambulance, route)
+    
+    offset_map = {
+        NODE_A: 0, NODE_B: 10, NODE_C: 20,
+        NODE_D: 30, NODE_E: 40, NODE_F: 50,
+        NODE_G: 0, NODE_H: 15, NODE_I: 30
+    }
+    
+    log_rows = []
+    current_time = 0
+    
+    for i in range(route.path_length):
+        node = route.path[i]
+        
+        if i > 0:
+            prev_node = route.path[i-1]
+            base_travel_time = int(get_segment_base_time(traffic.vehicle_counts[node]) / ambulance.speed)
+            
+            # Normal Mode wait penalty logic
+            wait_time = 0
+            if not is_corridor:
+                arrival_time_estimate = current_time + base_travel_time
+                offset = offset_map.get(node, 0)
+                phase_time = (arrival_time_estimate + offset) % 60
+                
+                if phase_time < 30: # RED
+                    wait_time = 30 - phase_time
+                elif phase_time >= 55: # YELLOW
+                    wait_time = (60 - phase_time) + 30
+            
+            travel_duration = base_travel_time + wait_time
+            # Log periodic steps of 10 seconds during transit
+            for t_offset in range(0, travel_duration, 10):
+                t_sampled = current_time + t_offset
+                pos_char = node_to_char(prev_node)
+                for j in range(9):
+                    junction_char = node_to_char(j)
+                    sig_state = "GREEN"
+                    if is_corridor:
+                        if j == prev_node:
+                            sig_state = "GREEN"
+                        elif j == node:
+                            sig_state = "RED" # Hold RED downstream for pre-emption
+                        else:
+                            sig_state = get_normal_signal_state(t_sampled, j, offset_map)
+                    else:
+                        sig_state = get_normal_signal_state(t_sampled, j, offset_map)
+                    
+                    density_str = density_to_string(traffic.density_levels[j])
+                    log_rows.append([t_sampled, junction_char, sig_state, pos_char, density_str])
+            
+            current_time += travel_duration
+            ambulance_tracker_move_to_next(ambulance, node)
+        
+        # Log at junction arrival step
+        for j in range(9):
+            junction_char = node_to_char(j)
+            sig_state = "GREEN"
+            if is_corridor:
+                if j == node:
+                    sig_state = "GREEN"
+                elif i < route.path_length - 1 and j == route.path[i+1]:
+                    sig_state = "RED"
+                else:
+                    sig_state = get_normal_signal_state(current_time, j, offset_map)
+            else:
+                sig_state = get_normal_signal_state(current_time, j, offset_map)
+                
+            density_str = density_to_string(traffic.density_levels[j])
+            log_rows.append([current_time, junction_char, sig_state, node_to_char(node), density_str])
+            
+    # Post-arrival cooling logs (30s)
+    for t_offset in range(10, 40, 10):
+        t_sampled = current_time + t_offset
+        for j in range(9):
+            junction_char = node_to_char(j)
+            sig_state = get_normal_signal_state(t_sampled, j, offset_map)
+            density_str = density_to_string(traffic.density_levels[j])
+            log_rows.append([t_sampled, junction_char, sig_state, node_to_char(NODE_I), density_str])
+
+    # Save to CSV
+    os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
+    with open(output_filepath, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["timestamp", "junction", "signal_state", "ambulance_position", "traffic_density"])
+        writer.writerows(log_rows)
+    print(f"Successfully generated CSV log: {output_filepath} (Duration: {current_time}s)")
+
 def main():
     print("=========================================")
     print("     STM32 Modules Unified Test Suite    ")
@@ -678,6 +796,14 @@ def main():
         
         scenario2_traffic = [0, 35, 48, 0, 15, 0, 0, 0, 0] # A, B=HIGH, C=HIGH, D, E=MED, F, G, H, I
         run_integration_scenario("SCENARIO 2: Congested Route Bypass (Start at A)", NODE_A, scenario2_traffic)
+        
+        # Generate CSV files for dashboard analytics
+        print("\n--- 5. Generating CSV logs for Dashboard (Week 5 Day 1) ---")
+        simulate_and_log_csv(scenario1_traffic, NODE_A, True, "dashboard/data/run_corridor.csv")
+        simulate_and_log_csv(scenario1_traffic, NODE_A, False, "dashboard/data/run_normal.csv")
+        
+        simulate_and_log_csv(scenario2_traffic, NODE_A, True, "dashboard/data/run_corridor_bypass.csv")
+        simulate_and_log_csv(scenario2_traffic, NODE_A, False, "dashboard/data/run_normal_bypass.csv")
         
         return True
     else:
