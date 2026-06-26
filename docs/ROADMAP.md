@@ -420,10 +420,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 3 — Performance Metrics**
 
-- [ ] Calculate: Travel Time Saved = Normal Time − Corridor Time
-- [ ] Calculate: Signals Cleared = count of signals that were green before ambulance arrival
-- [ ] Calculate: Corridor Efficiency = (Signals Cleared ÷ Total Signals on Route) × 100%
-- [ ] Calculate: Delay Reduction % = (Time Saved ÷ Normal Time) × 100%
+- [x] Calculate: Travel Time Saved = Normal Time − Corridor Time
+- [x] Calculate: Signals Cleared = count of signals that were green before ambulance arrival
+- [x] Calculate: Corridor Efficiency = (Signals Cleared ÷ Total Signals on Route) × 100%
+- [x] Calculate: Delay Reduction % = (Time Saved ÷ Normal Time) × 100%
 
 **Day 4 — Dashboard**
 

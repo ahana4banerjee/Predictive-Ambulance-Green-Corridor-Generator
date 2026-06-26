@@ -80,7 +80,7 @@ def parse_run_stats(filepath):
 
 def main():
     print("=========================================")
-    print("        WEEK 5 DAY 2: STATS GENERATION   ")
+    print("      WEEK 5 DAY 3: PERFORMANCE METRICS  ")
     print("=========================================")
     
     # Analyze Scenario 1: Standard/Low Traffic (Start at A)
@@ -91,18 +91,39 @@ def main():
     stats_norm = parse_run_stats(normal_file)
     
     if stats_corr and stats_norm:
-        print("\n=== SCENARIO 1: Standard Route (A -> B -> C -> I) ===")
-        print(f"Normal Mode Travel Time   : {stats_norm['travel_time']} seconds ({stats_norm['travel_time']/60:.2f} minutes)")
-        print(f"Corridor Mode Travel Time : {stats_corr['travel_time']} seconds ({stats_corr['travel_time']/60:.2f} minutes)")
-        time_saved = stats_norm['travel_time'] - stats_corr['travel_time']
+        print("\n=== SCENARIO 1: Standard Route (A -> B -> C -> F -> I) ===")
+        # 1. Travel Time Saved
+        t_normal = stats_norm['travel_time']
+        t_corridor = stats_corr['travel_time']
+        time_saved = t_normal - t_corridor
+        
+        print(f"Normal Mode Travel Time   : {t_normal} seconds ({t_normal/60:.2f} minutes)")
+        print(f"Corridor Mode Travel Time : {t_corridor} seconds ({t_corridor/60:.2f} minutes)")
         print(f"Travel Time Saved         : {time_saved} seconds ({time_saved/60:.2f} minutes)")
         
+        # 2. Delay Reduction %
+        delay_reduction_pct = (float(time_saved) / t_normal) * 100.0 if t_normal > 0 else 0.0
+        print(f"Delay Reduction %         : {delay_reduction_pct:.2f}%")
+        
+        # 3. Signals Cleared
+        # A signal is cleared if it is GREEN when the ambulance arrives.
+        total_signals = len(stats_corr['arrivals'])
+        signals_cleared_corr = sum(1 for j, (t, sig) in stats_corr['arrivals'].items() if sig == "GREEN")
+        signals_cleared_norm = sum(1 for j, (t, sig) in stats_norm['arrivals'].items() if sig == "GREEN")
+        
+        print(f"\nNormal Mode Signals Green : {signals_cleared_norm} / {total_signals}")
+        print(f"Corridor Mode Signals Green: {signals_cleared_corr} / {total_signals} (Cleared)")
+        
+        # 4. Corridor Efficiency %
+        corridor_efficiency = (float(signals_cleared_corr) / total_signals) * 100.0 if total_signals > 0 else 0.0
+        print(f"Corridor Efficiency %     : {corridor_efficiency:.2f}%")
+        
+        # 5. Stops avoided
+        stops_avoided = stats_norm['stops_count'] - stats_corr['stops_count']
         print(f"\nNormal Mode Stops         : {stats_norm['stops_count']} stops")
         for j, t, sig in stats_norm['stopped_junctions']:
             print(f"  - Stopped at Junction {j} at t={t}s (Signal: {sig})")
-            
         print(f"Corridor Mode Stops       : {stats_corr['stops_count']} stops")
-        stops_avoided = stats_norm['stops_count'] - stats_corr['stops_count']
         print(f"Red-Light Stops Avoided   : {stops_avoided}")
         
     # Analyze Scenario 2: Congested Route Bypass (Start at A)
@@ -114,17 +135,37 @@ def main():
     
     if stats_corr_bp and stats_norm_bp:
         print("\n=== SCENARIO 2: Congested Route Bypass (A -> D -> G -> H -> I) ===")
-        print(f"Normal Mode Travel Time   : {stats_norm_bp['travel_time']} seconds ({stats_norm_bp['travel_time']/60:.2f} minutes)")
-        print(f"Corridor Mode Travel Time : {stats_corr_bp['travel_time']} seconds ({stats_corr_bp['travel_time']/60:.2f} minutes)")
-        time_saved_bp = stats_norm_bp['travel_time'] - stats_corr_bp['travel_time']
+        # 1. Travel Time Saved
+        t_normal_bp = stats_norm_bp['travel_time']
+        t_corridor_bp = stats_corr_bp['travel_time']
+        time_saved_bp = t_normal_bp - t_corridor_bp
+        
+        print(f"Normal Mode Travel Time   : {t_normal_bp} seconds ({t_normal_bp/60:.2f} minutes)")
+        print(f"Corridor Mode Travel Time : {t_corridor_bp} seconds ({t_corridor_bp/60:.2f} minutes)")
         print(f"Travel Time Saved         : {time_saved_bp} seconds ({time_saved_bp/60:.2f} minutes)")
         
+        # 2. Delay Reduction %
+        delay_reduction_pct_bp = (float(time_saved_bp) / t_normal_bp) * 100.0 if t_normal_bp > 0 else 0.0
+        print(f"Delay Reduction %         : {delay_reduction_pct_bp:.2f}%")
+        
+        # 3. Signals Cleared
+        total_signals_bp = len(stats_corr_bp['arrivals'])
+        signals_cleared_corr_bp = sum(1 for j, (t, sig) in stats_corr_bp['arrivals'].items() if sig == "GREEN")
+        signals_cleared_norm_bp = sum(1 for j, (t, sig) in stats_norm_bp['arrivals'].items() if sig == "GREEN")
+        
+        print(f"\nNormal Mode Signals Green : {signals_cleared_norm_bp} / {total_signals_bp}")
+        print(f"Corridor Mode Signals Green: {signals_cleared_corr_bp} / {total_signals_bp} (Cleared)")
+        
+        # 4. Corridor Efficiency %
+        corridor_efficiency_bp = (float(signals_cleared_corr_bp) / total_signals_bp) * 100.0 if total_signals_bp > 0 else 0.0
+        print(f"Corridor Efficiency %     : {corridor_efficiency_bp:.2f}%")
+        
+        # 5. Stops avoided
+        stops_avoided_bp = stats_norm_bp['stops_count'] - stats_corr_bp['stops_count']
         print(f"\nNormal Mode Stops         : {stats_norm_bp['stops_count']} stops")
         for j, t, sig in stats_norm_bp['stopped_junctions']:
             print(f"  - Stopped at Junction {j} at t={t}s (Signal: {sig})")
-            
         print(f"Corridor Mode Stops       : {stats_corr_bp['stops_count']} stops")
-        stops_avoided_bp = stats_norm_bp['stops_count'] - stats_corr_bp['stops_count']
         print(f"Red-Light Stops Avoided   : {stops_avoided_bp}")
         
     print("\n=========================================")
