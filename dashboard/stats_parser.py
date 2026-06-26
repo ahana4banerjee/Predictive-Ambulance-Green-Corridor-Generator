@@ -78,20 +78,12 @@ def parse_run_stats(filepath):
         print(f"Error parsing {filepath}: {e}")
         return None
 
-def main():
-    print("=========================================")
-    print("      WEEK 5 DAY 3: PERFORMANCE METRICS  ")
-    print("=========================================")
-    
-    # Analyze Scenario 1: Standard/Low Traffic (Start at A)
-    corridor_file = "dashboard/data/run_corridor.csv"
-    normal_file = "dashboard/data/run_normal.csv"
-    
+def print_scenario_comparison(scenario_name, corridor_file, normal_file):
     stats_corr = parse_run_stats(corridor_file)
     stats_norm = parse_run_stats(normal_file)
     
     if stats_corr and stats_norm:
-        print("\n=== SCENARIO 1: Standard Route (A -> B -> C -> F -> I) ===")
+        print(f"\n=== {scenario_name} ===")
         # 1. Travel Time Saved
         t_normal = stats_norm['travel_time']
         t_corridor = stats_corr['travel_time']
@@ -106,7 +98,6 @@ def main():
         print(f"Delay Reduction %         : {delay_reduction_pct:.2f}%")
         
         # 3. Signals Cleared
-        # A signal is cleared if it is GREEN when the ambulance arrives.
         total_signals = len(stats_corr['arrivals'])
         signals_cleared_corr = sum(1 for j, (t, sig) in stats_corr['arrivals'].items() if sig == "GREEN")
         signals_cleared_norm = sum(1 for j, (t, sig) in stats_norm['arrivals'].items() if sig == "GREEN")
@@ -125,49 +116,47 @@ def main():
             print(f"  - Stopped at Junction {j} at t={t}s (Signal: {sig})")
         print(f"Corridor Mode Stops       : {stats_corr['stops_count']} stops")
         print(f"Red-Light Stops Avoided   : {stops_avoided}")
-        
-    # Analyze Scenario 2: Congested Route Bypass (Start at A)
-    corridor_bypass_file = "dashboard/data/run_corridor_bypass.csv"
-    normal_bypass_file = "dashboard/data/run_normal_bypass.csv"
+
+def print_scenario_5(normal_file):
+    stats_norm = parse_run_stats(normal_file)
+    if stats_norm:
+        print("\n=== SCENARIO 5: No Ambulance (Baseline Normal Cycling) ===")
+        print(f"Simulation Duration       : {stats_norm['travel_time']} seconds")
+        print("Ambulance Position        : - (None)")
+        print("Signal States Verification:")
+        try:
+            with open(normal_file, "r", encoding="utf-8") as f:
+                reader = csv.reader(f)
+                next(reader)
+                rows = list(reader)
+            states = {}
+            for row in rows:
+                sig = row[2]
+                states[sig] = states.get(sig, 0) + 1
+            for state, count in states.items():
+                print(f"  - {state} signal observations: {count}")
+        except Exception as e:
+            print(f"  - Error reading signal stats: {e}")
+
+def main():
+    print("=========================================")
+    print("      WEEK 5 DAY 3: PERFORMANCE METRICS  ")
+    print("=========================================")
     
-    stats_corr_bp = parse_run_stats(corridor_bypass_file)
-    stats_norm_bp = parse_run_stats(normal_bypass_file)
+    print_scenario_comparison("SCENARIO 1: Standard Route (A -> B -> C -> F -> I)",
+                              "dashboard/data/s1_corridor.csv", "dashboard/data/s1_normal.csv")
+                              
+    print_scenario_comparison("SCENARIO 2: Congested Route Bypass (A -> D -> G -> H -> I)",
+                              "dashboard/data/s2_corridor.csv", "dashboard/data/s2_normal.csv")
+                              
+    print_scenario_comparison("SCENARIO 3: Mixed Traffic (G -> H -> I)",
+                              "dashboard/data/s3_corridor.csv", "dashboard/data/s3_normal.csv")
+                              
+    print_scenario_comparison("SCENARIO 4: High Traffic (D -> E -> F -> I)",
+                              "dashboard/data/s4_corridor.csv", "dashboard/data/s4_normal.csv")
+                              
+    print_scenario_5("dashboard/data/s5_normal.csv")
     
-    if stats_corr_bp and stats_norm_bp:
-        print("\n=== SCENARIO 2: Congested Route Bypass (A -> D -> G -> H -> I) ===")
-        # 1. Travel Time Saved
-        t_normal_bp = stats_norm_bp['travel_time']
-        t_corridor_bp = stats_corr_bp['travel_time']
-        time_saved_bp = t_normal_bp - t_corridor_bp
-        
-        print(f"Normal Mode Travel Time   : {t_normal_bp} seconds ({t_normal_bp/60:.2f} minutes)")
-        print(f"Corridor Mode Travel Time : {t_corridor_bp} seconds ({t_corridor_bp/60:.2f} minutes)")
-        print(f"Travel Time Saved         : {time_saved_bp} seconds ({time_saved_bp/60:.2f} minutes)")
-        
-        # 2. Delay Reduction %
-        delay_reduction_pct_bp = (float(time_saved_bp) / t_normal_bp) * 100.0 if t_normal_bp > 0 else 0.0
-        print(f"Delay Reduction %         : {delay_reduction_pct_bp:.2f}%")
-        
-        # 3. Signals Cleared
-        total_signals_bp = len(stats_corr_bp['arrivals'])
-        signals_cleared_corr_bp = sum(1 for j, (t, sig) in stats_corr_bp['arrivals'].items() if sig == "GREEN")
-        signals_cleared_norm_bp = sum(1 for j, (t, sig) in stats_norm_bp['arrivals'].items() if sig == "GREEN")
-        
-        print(f"\nNormal Mode Signals Green : {signals_cleared_norm_bp} / {total_signals_bp}")
-        print(f"Corridor Mode Signals Green: {signals_cleared_corr_bp} / {total_signals_bp} (Cleared)")
-        
-        # 4. Corridor Efficiency %
-        corridor_efficiency_bp = (float(signals_cleared_corr_bp) / total_signals_bp) * 100.0 if total_signals_bp > 0 else 0.0
-        print(f"Corridor Efficiency %     : {corridor_efficiency_bp:.2f}%")
-        
-        # 5. Stops avoided
-        stops_avoided_bp = stats_norm_bp['stops_count'] - stats_corr_bp['stops_count']
-        print(f"\nNormal Mode Stops         : {stats_norm_bp['stops_count']} stops")
-        for j, t, sig in stats_norm_bp['stopped_junctions']:
-            print(f"  - Stopped at Junction {j} at t={t}s (Signal: {sig})")
-        print(f"Corridor Mode Stops       : {stats_corr_bp['stops_count']} stops")
-        print(f"Red-Light Stops Avoided   : {stops_avoided_bp}")
-        
     print("\n=========================================")
 
 if __name__ == "__main__":

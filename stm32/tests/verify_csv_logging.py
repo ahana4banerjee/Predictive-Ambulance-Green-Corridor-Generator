@@ -77,10 +77,15 @@ def verify_csv(filepath):
 
 def main():
     files_to_verify = [
-        "dashboard/data/run_corridor.csv",
-        "dashboard/data/run_normal.csv",
-        "dashboard/data/run_corridor_bypass.csv",
-        "dashboard/data/run_normal_bypass.csv"
+        "dashboard/data/s1_corridor.csv",
+        "dashboard/data/s1_normal.csv",
+        "dashboard/data/s2_corridor.csv",
+        "dashboard/data/s2_normal.csv",
+        "dashboard/data/s3_corridor.csv",
+        "dashboard/data/s3_normal.csv",
+        "dashboard/data/s4_corridor.csv",
+        "dashboard/data/s4_normal.csv",
+        "dashboard/data/s5_normal.csv"
     ]
     
     all_success = True

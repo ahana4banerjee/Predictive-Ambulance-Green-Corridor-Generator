@@ -60,6 +60,29 @@ void SimulateAndLogCSV_C(const uint8_t vehicle_counts[9], NodeId start_node, boo
     }
     TrafficMonitor_UpdateDensity(&traffic);
     
+    if (start_node == NODE_NONE) {
+        FILE* file = fopen(filepath, "w");
+        if (!file) {
+            printf("ERROR: C CSV Logger - Cannot open file %s for writing!\n", filepath);
+            return;
+        }
+        
+        fprintf(file, "timestamp,junction,signal_state,ambulance_position,traffic_density\n");
+        
+        for (uint32_t t = 0; t <= 120; t += 10) {
+            for (int j = 0; j < 9; j++) {
+                char junction_char = node_to_char((NodeId)j);
+                const char* sig_state = get_normal_signal_state_c(t, (NodeId)j);
+                const char* density_str = (traffic.density_levels[j] == DENSITY_LOW) ? "LOW" :
+                                           (traffic.density_levels[j] == DENSITY_MEDIUM) ? "MEDIUM" : "HIGH";
+                fprintf(file, "%u,%c,%s,-,%s\n", t, junction_char, sig_state, density_str);
+            }
+        }
+        fclose(file);
+        printf("Successfully generated Scenario 5 CSV log (C): %s (Duration: 120s)\n", filepath);
+        return;
+    }
+    
     RouteDetails route;
     RouteOptimizer_FindPath(&traffic, start_node, &route);
     
@@ -267,27 +290,57 @@ int main(void) {
     printf("=========================================================\n");
     
     // Scenario 1: Low traffic conditions on all junctions
-    uint8_t scenario1_traffic[9] = {
+    uint8_t s1_traffic[9] = {
         0, 0, 0, // A, B, C
         0, 0, 0, // D, E, F
         0, 0, 0  // G, H, I
     };
-    RunIntegrationScenario("SCENARIO 1: Standard/Low Traffic (Start at A)", NODE_A, scenario1_traffic);
+    RunIntegrationScenario("SCENARIO 1: Standard/Low Traffic (Start at A)", NODE_A, s1_traffic);
     
     // Scenario 2: Congested top route (Junctions B, C high traffic, E medium traffic)
-    uint8_t scenario2_traffic[9] = {
+    uint8_t s2_traffic[9] = {
         0, 35, 48, // A, B=HIGH, C=HIGH
         0, 15, 0,  // D, E=MEDIUM, F
         0, 0, 0    // G, H, I
     };
-    RunIntegrationScenario("SCENARIO 2: Congested Route Bypass (Start at A)", NODE_A, scenario2_traffic);
+    RunIntegrationScenario("SCENARIO 2: Congested Route Bypass (Start at A)", NODE_A, s2_traffic);
+    
+    // Scenario 3: Mixed traffic from G
+    uint8_t s3_traffic[9] = {
+        0, 0, 0,   // A, B, C
+        12, 2, 35, // D=MEDIUM, E=LOW, F=HIGH
+        0, 22, 0   // G, H=MEDIUM, I
+    };
+    RunIntegrationScenario("SCENARIO 3: Mixed Traffic (Start at G)", NODE_G, s3_traffic);
+    
+    // Scenario 4: Ambulance from D, all HIGH traffic
+    uint8_t s4_traffic[9] = {
+        35, 35, 35, // A, B, C (all HIGH)
+        35, 35, 35, // D, E, F
+        35, 35, 35  // G, H, I
+    };
+    RunIntegrationScenario("SCENARIO 4: High Traffic (Start at D)", NODE_D, s4_traffic);
     
     // Generate CSV output logs
-    printf("\n--- GENERATING CSV LOGS FOR WEEK 5 DAY 1 ---\n");
-    SimulateAndLogCSV_C(scenario1_traffic, NODE_A, true, "dashboard/data/run_corridor_c.csv");
-    SimulateAndLogCSV_C(scenario1_traffic, NODE_A, false, "dashboard/data/run_normal_c.csv");
-    SimulateAndLogCSV_C(scenario2_traffic, NODE_A, true, "dashboard/data/run_corridor_bypass_c.csv");
-    SimulateAndLogCSV_C(scenario2_traffic, NODE_A, false, "dashboard/data/run_normal_bypass_c.csv");
+    printf("\n--- GENERATING CSV LOGS FOR WEEK 5 DAY 5-7 ---\n");
+    // Scenario 1
+    SimulateAndLogCSV_C(s1_traffic, NODE_A, true, "dashboard/data/s1_corridor_c.csv");
+    SimulateAndLogCSV_C(s1_traffic, NODE_A, false, "dashboard/data/s1_normal_c.csv");
+    
+    // Scenario 2
+    SimulateAndLogCSV_C(s2_traffic, NODE_A, true, "dashboard/data/s2_corridor_c.csv");
+    SimulateAndLogCSV_C(s2_traffic, NODE_A, false, "dashboard/data/s2_normal_c.csv");
+    
+    // Scenario 3
+    SimulateAndLogCSV_C(s3_traffic, NODE_G, true, "dashboard/data/s3_corridor_c.csv");
+    SimulateAndLogCSV_C(s3_traffic, NODE_G, false, "dashboard/data/s3_normal_c.csv");
+    
+    // Scenario 4
+    SimulateAndLogCSV_C(s4_traffic, NODE_D, true, "dashboard/data/s4_corridor_c.csv");
+    SimulateAndLogCSV_C(s4_traffic, NODE_D, false, "dashboard/data/s4_normal_c.csv");
+    
+    // Scenario 5
+    SimulateAndLogCSV_C(s1_traffic, NODE_NONE, false, "dashboard/data/s5_normal_c.csv");
     
     return 0;
 }

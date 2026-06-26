@@ -227,7 +227,7 @@ Predictive-Ambulance-Green-Corridor-Generator/
 | **Week 2** | 🧠 STM32 Intelligence | Console output: traffic status, selected route, ETA, ambulance position | ✅ |
 | **Week 3** | ⚡ Vivado Signal Control | Waveforms: normal operation, emergency override, corridor generation | ✅ |
 | **Week 4** | 💡 Tinkercad Simulation | Working visual demo: LEDs change on ambulance button press | ✅ |
-| **Week 5** | 📊 Integration & Analytics | Dashboard: time saved, efficiency, comparison graphs | ☐ |
+| **Week 5** | 📊 Integration & Analytics | Dashboard: time saved, efficiency, comparison graphs | ✅ |
 | **Week 6** | ✨ Final Polish | Screenshots, report, presentation, complete demo | ☐ |
 
 ### Milestones

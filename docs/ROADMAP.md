@@ -399,10 +399,10 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 ### Goals
 
-- [ ] Create CSV logging of travel time, delays, and signal states
-- [ ] Calculate performance metrics: time saved, efficiency, signals cleared
-- [ ] Build analytics dashboard with comparison graphs
-- [ ] Run multiple test scenarios
+- [x] Create CSV logging of travel time, delays, and signal states
+- [x] Calculate performance metrics: time saved, efficiency, signals cleared
+- [x] Build analytics dashboard with comparison graphs
+- [x] Run multiple test scenarios
 
 ### Tasks
 
@@ -427,41 +427,41 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 4 — Dashboard**
 
-- [ ] Create `dashboard/analytics.py`
-- [ ] Implement data loading from CSV
-- [ ] Create bar chart: Normal Travel Time vs. Corridor Travel Time
-- [ ] Create metric display: Time Saved, Efficiency %, Signals Cleared
+- [x] Create `dashboard/analytics.py`
+- [x] Implement data loading from CSV
+- [x] Create bar chart: Normal Travel Time vs. Corridor Travel Time
+- [x] Create metric display: Time Saved, Efficiency %, Signals Cleared
 
 **Day 5 — Comparison Analysis**
 
-- [ ] Run simulation: Ambulance from Junction A without corridor → record travel time
-- [ ] Run simulation: Ambulance from Junction A with corridor → record travel time
-- [ ] Generate side-by-side comparison
+- [x] Run simulation: Ambulance from Junction A without corridor → record travel time
+- [x] Run simulation: Ambulance from Junction A with corridor → record travel time
+- [x] Generate side-by-side comparison
 
 **Day 6–7 — Multi-Scenario Testing**
 
-- [ ] Scenario 1: Ambulance from A, LOW traffic everywhere → verify shortest route
-- [ ] Scenario 2: Ambulance from A, HIGH traffic on B–C → verify route avoidance
-- [ ] Scenario 3: Ambulance from G, mixed traffic → verify correct route and ETA
-- [ ] Scenario 4: Ambulance from D, all HIGH traffic → verify corridor still activates
-- [ ] Scenario 5: No ambulance → verify normal operation only
-- [ ] Save all results to `results/` and `dashboard/data/`
+- [x] Scenario 1: Ambulance from A, LOW traffic everywhere → verify shortest route
+- [x] Scenario 2: Ambulance from A, HIGH traffic on B–C → verify route avoidance
+- [x] Scenario 3: Ambulance from G, mixed traffic → verify correct route and ETA
+- [x] Scenario 4: Ambulance from D, all HIGH traffic → verify corridor still activates
+- [x] Scenario 5: No ambulance → verify normal operation only
+- [x] Save all results to `results/` and `dashboard/data/`
 
 ### Expected Outputs
 
-- [ ] CSV log files for multiple ambulance runs
-- [ ] `dashboard/analytics.py` — generates performance graphs
-- [ ] Comparison table: Normal vs. Corridor mode
-- [ ] Performance metrics: Time Saved, Efficiency, Signals Cleared, Delay Reduction
-- [ ] Graphs saved to `dashboard/graphs/` and `results/graphs/`
+- [x] CSV log files for multiple ambulance runs
+- [x] `dashboard/analytics.py` — generates performance graphs
+- [x] Comparison table: Normal vs. Corridor mode
+- [x] Performance metrics: Time Saved, Efficiency, Signals Cleared, Delay Reduction
+- [x] Graphs saved to `dashboard/graphs/` and `results/graphs/`
 
 ### Validation Checks
 
-- [ ] Does the corridor mode consistently show lower travel time than normal mode?
-- [ ] Is corridor efficiency above 80% for standard scenarios?
-- [ ] Do all 5 test scenarios produce reasonable, explainable results?
-- [ ] Does the dashboard correctly load and visualize CSV data?
-- [ ] Are all results reproducible (same input → same output)?
+- [x] Does the corridor mode consistently show lower travel time than normal mode?
+- [x] Is corridor efficiency above 80% for standard scenarios?
+- [x] Do all 5 test scenarios produce reasonable, explainable results?
+- [x] Does the dashboard correctly load and visualize CSV data?
+- [x] Are all results reproducible (same input → same output)?
 
 ---
 

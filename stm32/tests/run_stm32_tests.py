@@ -664,6 +664,32 @@ def simulate_and_log_csv(vehicle_counts, start_node, is_corridor, output_filepat
         traffic_monitor_set_vehicle_count(traffic, i, vehicle_counts[i])
     traffic_monitor_update_density(traffic)
     
+    offset_map = {
+        NODE_A: 0, NODE_B: 10, NODE_C: 20,
+        NODE_D: 30, NODE_E: 40, NODE_F: 50,
+        NODE_G: 0, NODE_H: 15, NODE_I: 30
+    }
+    
+    log_rows = []
+    
+    if start_node == NODE_NONE or start_node >= 9:
+        # Scenario 5: No ambulance simulation
+        # Log standard traffic cycling for 120 seconds
+        for t in range(0, 130, 10):
+            for j in range(9):
+                junction_char = node_to_char(j)
+                sig_state = get_normal_signal_state(t, j, offset_map)
+                density_str = density_to_string(traffic.density_levels[j])
+                log_rows.append([t, junction_char, sig_state, "-", density_str])
+        
+        os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
+        with open(output_filepath, "w", newline="", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["timestamp", "junction", "signal_state", "ambulance_position", "traffic_density"])
+            writer.writerows(log_rows)
+        print(f"Successfully generated Scenario 5 CSV log: {output_filepath} (Duration: 120s)")
+        return
+        
     route = RouteDetails()
     route_optimizer_find_path(traffic, start_node, route)
     
@@ -675,13 +701,6 @@ def simulate_and_log_csv(vehicle_counts, start_node, is_corridor, output_filepat
     ambulance_tracker_init(ambulance, start_node)
     ambulance_tracker_set_route(ambulance, route)
     
-    offset_map = {
-        NODE_A: 0, NODE_B: 10, NODE_C: 20,
-        NODE_D: 30, NODE_E: 40, NODE_F: 50,
-        NODE_G: 0, NODE_H: 15, NODE_I: 30
-    }
-    
-    log_rows = []
     current_time = 0
     
     for i in range(route.path_length):
@@ -791,20 +810,39 @@ def main():
         print("ALL TESTS PASSED")
         print("=========================================")
         
-        # Run Integration Scenarios if all tests passed
-        scenario1_traffic = [0] * 9
-        run_integration_scenario("SCENARIO 1: Standard/Low Traffic (Start at A)", NODE_A, scenario1_traffic)
+        # Scenarios parameters
+        s1_traffic = [0] * 9
+        s2_traffic = [0, 35, 48, 0, 15, 0, 0, 0, 0]
+        s3_traffic = [0, 0, 0, 12, 2, 35, 0, 22, 0]
+        s4_traffic = [35] * 9
+        s5_traffic = [0] * 9
         
-        scenario2_traffic = [0, 35, 48, 0, 15, 0, 0, 0, 0] # A, B=HIGH, C=HIGH, D, E=MED, F, G, H, I
-        run_integration_scenario("SCENARIO 2: Congested Route Bypass (Start at A)", NODE_A, scenario2_traffic)
+        # Run Integration Scenarios if all tests passed
+        run_integration_scenario("SCENARIO 1: Standard/Low Traffic (Start at A)", NODE_A, s1_traffic)
+        run_integration_scenario("SCENARIO 2: Congested Route Bypass (Start at A)", NODE_A, s2_traffic)
+        run_integration_scenario("SCENARIO 3: Mixed Traffic (Start at G)", NODE_G, s3_traffic)
+        run_integration_scenario("SCENARIO 4: High Traffic (Start at D)", NODE_D, s4_traffic)
         
         # Generate CSV files for dashboard analytics
-        print("\n--- 5. Generating CSV logs for Dashboard (Week 5 Day 1) ---")
-        simulate_and_log_csv(scenario1_traffic, NODE_A, True, "dashboard/data/run_corridor.csv")
-        simulate_and_log_csv(scenario1_traffic, NODE_A, False, "dashboard/data/run_normal.csv")
+        print("\n--- 5. Generating CSV logs for Dashboard (Week 5 Day 5-7) ---")
+        # Scenario 1
+        simulate_and_log_csv(s1_traffic, NODE_A, True, "dashboard/data/s1_corridor.csv")
+        simulate_and_log_csv(s1_traffic, NODE_A, False, "dashboard/data/s1_normal.csv")
         
-        simulate_and_log_csv(scenario2_traffic, NODE_A, True, "dashboard/data/run_corridor_bypass.csv")
-        simulate_and_log_csv(scenario2_traffic, NODE_A, False, "dashboard/data/run_normal_bypass.csv")
+        # Scenario 2
+        simulate_and_log_csv(s2_traffic, NODE_A, True, "dashboard/data/s2_corridor.csv")
+        simulate_and_log_csv(s2_traffic, NODE_A, False, "dashboard/data/s2_normal.csv")
+        
+        # Scenario 3
+        simulate_and_log_csv(s3_traffic, NODE_G, True, "dashboard/data/s3_corridor.csv")
+        simulate_and_log_csv(s3_traffic, NODE_G, False, "dashboard/data/s3_normal.csv")
+        
+        # Scenario 4
+        simulate_and_log_csv(s4_traffic, NODE_D, True, "dashboard/data/s4_corridor.csv")
+        simulate_and_log_csv(s4_traffic, NODE_D, False, "dashboard/data/s4_normal.csv")
+        
+        # Scenario 5
+        simulate_and_log_csv(s5_traffic, NODE_NONE, False, "dashboard/data/s5_normal.csv")
         
         return True
     else:
