@@ -408,9 +408,9 @@ If the core scope is completed ahead of schedule (likely in Week 6), the followi
 
 **Day 1 — CSV Logging**
 
-- [ ] Define CSV format: timestamp, junction, signal_state, ambulance_position, traffic_density
-- [ ] Implement logging from STM32 simulation output
-- [ ] Log at least one complete ambulance run
+- [x] Define CSV format: timestamp, junction, signal_state, ambulance_position, traffic_density
+- [x] Implement logging from STM32 simulation output
+- [x] Log at least one complete ambulance run
 
 **Day 2 — Statistics Generation**
 
