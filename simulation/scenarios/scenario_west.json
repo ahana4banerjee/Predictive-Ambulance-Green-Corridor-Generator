@@ -1,0 +1,20 @@
+{
+  "scenario": {
+    "id": 3,
+    "name": "Scenario 3: Western Congestion",
+    "description": "Junction D and G have HIGH traffic. The optimizer should choose the upper route: A -> B -> C -> F -> I.",
+    "traffic_counts": {
+      "A": 4,
+      "B": 5,
+      "C": 3,
+      "D": 30,
+      "E": 6,
+      "F": 4,
+      "G": 27,
+      "H": 5,
+      "I": 0
+    },
+    "expected_route": ["A", "B", "C", "F", "I"],
+    "expected_cost": 4.0
+  }
+}
