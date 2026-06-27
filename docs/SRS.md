@@ -1,343 +1,63 @@
-**Software Requirements Specification (SRS)**
-
-**Predictive Ambulance Green Corridor Generator using Traffic-Aware Signal Coordination**
-
-**1\. Introduction**
-
-**1.1 Purpose**
-
-The purpose of this project is to design and simulate an intelligent traffic management system capable of generating a predictive green corridor for ambulances. The system aims to reduce emergency response time by dynamically coordinating traffic signals based on ambulance location, route, speed, and current traffic conditions.
-
-The project will be implemented using STM32CubeIDE, Vivado, and Tinkercad in a fully simulated environment before any hardware deployment.
-
-**1.2 Scope**
-
-The system will:
-
-- Monitor traffic density at multiple intersections.
-- Track ambulance movement in real time.
-- Determine the optimal route to a hospital.
-- Predict future ambulance positions.
-- Coordinate traffic signals ahead of ambulance arrival.
-- Measure performance improvements through analytics.
-
-The project is intended as a smart-city traffic management solution that can later be extended to real-world deployments.
-
-**2\. Problem Statement**
-
-Emergency vehicles frequently experience delays due to traffic congestion and conventional traffic signal systems.
-
-Current traffic systems typically:
-
-- Operate on fixed timing schedules.
-- Respond only when emergency vehicles reach an intersection.
-- Lack coordination among neighboring traffic signals.
-- Do not optimize routes based on current traffic conditions.
-
-As a result, ambulances may lose valuable time during patient transport.
-
-This project proposes a predictive traffic management system capable of proactively generating green corridors before the ambulance reaches intersections, thereby reducing delays and improving emergency response efficiency.
-
-**3\. Objectives**
-
-**Primary Objectives**
-
-- Develop a predictive ambulance corridor generation system.
-- Reduce ambulance travel delays.
-- Coordinate multiple traffic signals automatically.
-- Simulate a smart-city emergency traffic network.
-
-**Secondary Objectives**
-
-- Display real-time traffic conditions.
-- Estimate ambulance arrival time.
-- Provide route optimization.
-- Generate performance analytics.
-- Demonstrate FPGA-based traffic signal control.
-
-**4\. Functional Requirements**
-
-**FR-1 Traffic Monitoring**
-
-The system shall monitor vehicle density at all intersections.
-
-**Input**
-
-- Vehicle count data
-
-**Output**
-
-- Traffic density classification:
-  - Low
-  - Medium
-  - High
-
-**FR-2 Ambulance Detection**
-
-The system shall detect ambulance activation and initiate emergency mode.
-
-**Input**
-
-- Ambulance start command
-
-**Output**
-
-- Emergency mode enabled
-
-**FR-3 Ambulance Tracking**
-
-The system shall continuously track ambulance location and speed.
-
-**Output**
-
-- Current position
-- Current speed
-- Distance remaining
-
-**FR-4 Route Selection**
-
-The system shall determine the most efficient route to the hospital.
-
-**Inputs**
-
-- Road network
-- Traffic density
-
-**Output**
-
-- Selected route
-
-**FR-5 ETA Calculation**
-
-The system shall estimate ambulance arrival time.
-
-**Output**
-
-- Estimated Time of Arrival (ETA)
-
-**FR-6 Future Intersection Prediction**
-
-The system shall predict future signal crossings based on ambulance movement.
-
-**Output**
-
-- Predicted arrival time at each intersection
-
-**FR-7 Green Corridor Generation**
-
-The system shall automatically coordinate traffic signals ahead of ambulance arrival.
-
-**Output**
-
-- Dynamic signal states
-
-**FR-8 Emergency Signal Override**
-
-The system shall override normal signal operation during emergency conditions.
-
-**Output**
-
-- Emergency green path
-
-**FR-9 Signal Recovery**
-
-The system shall restore normal signal operation after ambulance passage.
-
-**Output**
-
-- Normal traffic operation resumed
-
-**FR-10 Analytics Generation**
-
-The system shall calculate performance metrics.
-
-**Metrics**
-
-- Travel time saved
-- Number of signals cleared
-- Corridor efficiency
-- Delay reduction percentage
-
-**5\. Non-Functional Requirements**
-
-**NFR-1 Reliability**
-
-The system shall consistently generate correct signal decisions during simulations.
-
-**NFR-2 Scalability**
-
-The system architecture shall support future expansion to:
-
-- More intersections
-- More ambulances
-- Larger city maps
-
-**NFR-3 Maintainability**
-
-Modules shall be independently designed and tested.
-
-Examples:
-
-- Traffic Module
-- Tracking Module
-- FPGA Module
-- Dashboard Module
-
-**NFR-4 Usability**
-
-The system shall provide clear visualization of:
-
-- Ambulance location
-- Signal states
-- Traffic conditions
-
-**NFR-5 Performance**
-
-Signal decisions should be generated immediately after receiving ambulance updates.
-
-**NFR-6 Modularity**
-
-The design shall allow independent modification of:
-
-- Route optimization logic
-- Traffic simulation
-- Signal controller
-
-without affecting the entire system.
-
-**NFR-7 Portability**
-
-The design shall support future migration to:
-
-- STM32 hardware
-- FPGA boards
-- Real sensors
-
-without major redesign.
-
-**6\. Use Cases**
-
-**Use Case 1: Normal Traffic Operation**
-
-**Actor**
-
-Traffic Management System
-
-**Description**
-
-Signals operate using normal traffic cycles.
-
-**Outcome**
-
-Normal city traffic flow maintained.
-
-**Use Case 2: Ambulance Emergency Activation**
-
-**Actor**
-
-Emergency Operator
-
-**Description**
-
-Ambulance begins emergency route.
-
-**Outcome**
-
-Emergency mode activated.
-
-**Use Case 3: Route Optimization**
-
-**Actor**
-
-System
-
-**Description**
-
-System evaluates traffic conditions and selects the fastest route.
-
-**Outcome**
-
-Optimal route generated.
-
-**Use Case 4: Green Corridor Creation**
-
-**Actor**
-
-System
-
-**Description**
-
-Signals are coordinated ahead of ambulance movement.
-
-**Outcome**
-
-Continuous green path created.
-
-**Use Case 5: Ambulance Arrival**
-
-**Actor**
-
-Ambulance
-
-**Description**
-
-Ambulance reaches destination hospital.
-
-**Outcome**
-
-Emergency mode terminated.
-
-**Use Case 6: Analytics Generation**
-
-**Actor**
-
-Traffic Administrator
-
-**Description**
-
-System calculates corridor performance.
-
-**Outcome**
-
-Performance report generated.
-
-**7\. Constraints**
-
-**Technical Constraints**
-
-- Project must initially operate entirely in simulation.
-- No physical sensors are required.
-- FPGA implementation limited to Vivado simulation.
-- STM32 implementation limited to STM32CubeIDE simulation.
-
-**Resource Constraints**
-
-- Zero hardware cost during initial development.
-- Development based on available tools:
-  - Vivado
-  - STM32CubeIDE
-  - Tinkercad
-
-**Time Constraints**
-
-- Target completion period:
-  - 5-6 weeks
-  - 2-3 hours daily effort
-
-**Project Constraints**
-
-- Focus on a single-city simulation.
-- Single ambulance support in first version.
-- Advanced features may be added later.
-
-**8\. Success Criteria**
-
-The project shall be considered successful if:
-
-- Ambulance route is generated successfully.
-- Traffic conditions are monitored.
-- Signals coordinate automatically.
-- Green corridor is created before ambulance arrival.
-- Travel time reduction is demonstrated.
-- Analytics are displayed correctly.
-- Complete simulation runs without manual signal intervention.
+# System Requirements Specification (SRS)
+### Predictive Ambulance Green Corridor Generator — Digital Twin Model
+
+---
+
+## 1. Introduction
+
+This document outlines the software and hardware constraints, functional specifications, and protocol requirements for the Predictive Ambulance Green Corridor system. The codebase acts as a **simulation-first embedded digital twin**, modeling independent hardware subsystems bridged by virtual peripheral interfaces (SPI and UART).
+
+---
+
+## 2. General System Architecture Requirements
+
+*   **Subsystem Boundary Isolation:** The system must isolate operations across three distinct domains:
+    1.  *Intelligence (STM32 CPU):* Routing algorithms, travel math, packet compiler.
+    2.  *Control (FPGA RTL):* Signal FSM transitions, emergency override preemption, UART serial output.
+    3.  *Visualization (Arduino UNO):* Passive character display, LED driver.
+*   **Virtual Interface Emulation:** Serial bus registers must be mirrored in simulation via shared log buffers.
+    *   Virtual SPI Master (STM32) ➔ Virtual SPI Slave (FPGA)
+    *   Virtual UART Transmitter (FPGA) ➔ Virtual UART Receiver (Arduino)
+*   **Hardware Equivalence:** The protocol, data packing bitfields, and FSM transition parameters must be identical to physical hardware specifications to ensure zero-code changes upon migration to physical silicon.
+
+---
+
+## 3. Detailed Functional Requirements
+
+### A. STM32 Intelligence Subsystem
+*   **FR-MCU-001 (Congestion Classification):** The monitor must categorize vehicle counts into LOW (0-10), MEDIUM (11-25), and HIGH (26+) density zones.
+*   **FR-MCU-002 (Dijkstra Pathfinder):** The Route Optimizer must compute the shortest path using dynamic weight penalties (1.0 for LOW, 1.5 for MED, 3.0 for HIGH congestion).
+*   **FR-MCU-003 (ETA Generator):** The calculator must compute segment arrival ETAs based on distance and travel speeds.
+*   **FR-MCU-004 (SPI Register Packer):** The system must pack:
+    *   Bit 31: Emergency Active flag
+    *   Bits 30-27: Current node ID (0-8)
+    *   Bits 26-23: Target preemption node ID (0-8)
+    *   Bits 22-11: target node ETA (0-4095s)
+    *   Bits 10-8: remaining node hops (0-7)
+    *   Bits 7-0: Byte-wise XOR checksum
+*   **FR-MCU-005 (Virtual SPI Output):** The SPI Master must serialize and log the packed 32-bit transaction word to `simulation/virtual_bus/spi_bus.txt` every 200ms during an active emergency run.
+
+### B. FPGA Control Subsystem
+*   **FR-FPGA-001 (SPI Serial Receiver):** The receiver module must deserialize MOSI bits on SCLK rising edges while NSS is LOW.
+*   **FR-FPGA-002 (Checksum Validation):** The SPI slave must compute the XOR parity of the first three bytes of the packet. If it matches the checksum byte, data is latched; otherwise, the packet is discarded and a checksum error is flagged.
+*   **FR-FPGA-003 (Clock Domain Synchronization):** Shifted inputs must pass through two stages of flip-flops to prevent metastability when transitioning from SCLK to the internal 100MHz system clock domain.
+*   **FR-FPGA-004 (Dynamic Preemption wave):** The `Corridor Controller` must assert `prep_x` (prepare flag for junction X) if `target_node == NODE_X` and `current_node != NODE_X`. It must assert `act_x` (active preemption) if `current_node == NODE_X`.
+*   **FR-FPGA-005 (Safety Recovery):** Emergency overrides must remain locked in `STATE_RECOVERY` for 10 system clock cycles after the ambulance leaves a junction to allow cross-street queues to clear before releasing FSM control to normal cycles.
+*   **FR-FPGA-006 (UART Output logging):** The serial transmitter must write ASCII telemetry packets (`$` + states + mode + pos + ETA + `\n`) to `simulation/virtual_bus/uart_bus.txt` every 100ms.
+
+### C. Arduino Visualization Subsystem
+*   **FR-ARD-001 (Passive Receiver):** The Arduino UNO sketch **must not** calculate routes, duplicate traffic light state machines, or determine ETAs. All outputs must be driven directly by the parsed UART serial string.
+*   **FR-ARD-002 (Serial String Parsing):** The Arduino must scan incoming serial inputs at 9600 Baud, detect the `$` start delimiter, unpack signal and mode characters, and check the `\n` stop character.
+*   **FR-ARD-003 (LED/LCD Mapping):** The sketch must map:
+    *   Signal states to D2-D10 outputs.
+    *   Modes, position, and ETAs to character strings on the 16x2 LCD display.
+*   **FR-ARD-004 (Sensing Forwarding):** Pressing buttons D11-D13 or A0 must output raw interrupts/signals to the scenario generator.
+
+---
+
+## 4. Hardware Constraints
+
+*   **SPI Bus Timing:** Maximum SCLK frequency = 10 MHz. Master data must be stable at least 15ns before SCLK rising edges.
+*   **UART Bus Timing:** Baud rate = 9600, tolerance = +/- 1.5%.
+*   **FPGA Clock:** Internal system clock frequency = 100 MHz.
+*   **Voltage Levels:** STM32 inputs operate at 3.3V (5V tolerant pins). Arduino UNO operates at 5V logic. Hardware level-shifters (e.g. TXB0104) are required for physical pins.
