@@ -1,0 +1,20 @@
+{
+  "scenario": {
+    "id": 5,
+    "name": "Scenario 5: Mixed Traffic Gridlock",
+    "description": "Heavy traffic blocks both normal shortest routes (B is HIGH, D is MEDIUM, E is HIGH). The router should select A -> D -> G -> H -> I as the most optimal path.",
+    "traffic_counts": {
+      "A": 6,
+      "B": 35,
+      "C": 25,
+      "D": 15,
+      "E": 30,
+      "F": 12,
+      "G": 5,
+      "H": 6,
+      "I": 0
+    },
+    "expected_route": ["A", "D", "G", "H", "I"],
+    "expected_cost": 6.0
+  }
+}
